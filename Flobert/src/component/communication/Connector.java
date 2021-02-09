@@ -4,30 +4,19 @@ import component.communication.interfaces.CommunicationCI;
 import component.communication.interfaces.MessageI;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
-import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractOutboundPort;
+import fr.sorbonne_u.components.connectors.AbstractConnector;
 
-public class CommunicationOutbound extends AbstractOutboundPort implements CommunicationCI {
-
-	private static final long serialVersionUID = 1L;
-
-	public CommunicationOutbound(ComponentI owner) throws Exception {
-		super(CommunicationCI.class, owner);
-	}
-	
-	public CommunicationOutbound(String uri, ComponentI owner) throws Exception {
-		super(uri, CommunicationCI.class, owner);
-	}
+public class Connector extends AbstractConnector implements CommunicationCI {
 
 	@Override
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
-		((CommunicationCI) this.getConnector()).connect(address, communicationInboundPortURI);
+		((CommunicationCI) this.offering).connect(address, communicationInboundPortURI);
 	}
 
 	@Override
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI)
 			throws Exception {
-		((CommunicationCI) this.getConnector()).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
+		((CommunicationCI) this.offering).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
 	}
 
 	@Override
@@ -44,4 +33,7 @@ public class CommunicationOutbound extends AbstractOutboundPort implements Commu
 	public void ping() {
 		
 	}
+	
+	
+
 }

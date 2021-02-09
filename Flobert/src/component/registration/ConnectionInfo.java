@@ -11,7 +11,7 @@ public class ConnectionInfo
 	private PositionI pos;
 	private double portee;
 	
-	public ConnectionInfo(NodeAddressI addr, String communicationInboundPortURI, String routingInboundURI,PositionI initialPosition, double initialRange) 
+	public ConnectionInfo(NodeAddressI addr, String communicationInboundPortURI, String routingInboundURI, PositionI initialPosition, double initialRange) 
 	{
 		this.addr = addr;
 		this.communicationInboundPortURI = communicationInboundPortURI;

@@ -5,8 +5,11 @@ import java.util.Set;
 
 import component.communication.interfaces.CommunicationCI;
 import component.communication.interfaces.MessageI;
+import component.registration.NodeAddress;
+import component.registration.Position;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
+import component.registration.interfaces.PositionI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
@@ -20,8 +23,8 @@ public class Communication extends AbstractComponent
 	
 	private CommunicationInbound inboundPort;
 	private CommunicationOutbound outboundPort;
-	private static final String COMMUNICATIONINBOUNDPORTURI = "cip-uri";
-	private static final String COMMUNICATIONOUTBOUNDPORTURI = "cop-uri";
+	public static final String COMMUNICATIONINBOUNDPORTURI = "cip-uri";
+	public static final String COMMUNICATIONOUTBOUNDPORTURI = "cop-uri";
 	
 	private Set<NodeAddressI> voisins = new HashSet<>();
 	
@@ -31,12 +34,14 @@ public class Communication extends AbstractComponent
 		this.outboundPort = new CommunicationOutbound(COMMUNICATIONOUTBOUNDPORTURI, this);
 		this.inboundPort.publishPort();
 		this.outboundPort.publishPort();
+		this.toggleLogging();
+		this.toggleTracing();
 	}
 	
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
 		voisins.add(address);
-		this.doPortConnection(communicationInboundPortURI, COMMUNICATIONOUTBOUNDPORTURI, Communication.class.getCanonicalName());
+		//this.doPortConnection(communicationInboundPortURI, COMMUNICATIONOUTBOUNDPORTURI, Connector.class.getCanonicalName());
 	}
 	
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
@@ -61,6 +66,22 @@ public class Communication extends AbstractComponent
 	}
 	
 	@Override
+	public synchronized void execute() throws Exception
+	{
+		this.logMessage("test1");
+		super.execute();
+		this.logMessage("test2");
+		try {
+			connect(new NodeAddress("0.0.0.1", new Position(0, 0), 5), "cip-02");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		this.logMessage("test3");
+		this.logMessage("nb voisins " + voisins.size());
+		
+	}
+	
+	@Override
 	public synchronized void shutdown() throws ComponentShutdownException
 	{
 		try {
@@ -76,7 +97,6 @@ public class Communication extends AbstractComponent
 	public synchronized void finalise() throws Exception
 	{
 		this.doPortDisconnection(COMMUNICATIONOUTBOUNDPORTURI);
-		this.doPortDisconnection(COMMUNICATIONINBOUNDPORTURI);
 		super.finalise();
 	}
 }
