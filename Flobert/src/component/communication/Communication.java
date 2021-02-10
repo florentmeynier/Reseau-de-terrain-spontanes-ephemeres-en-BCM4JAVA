@@ -9,15 +9,16 @@ import component.registration.NodeAddress;
 import component.registration.Position;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
-import component.registration.interfaces.PositionI;
+import component.terminalNode.ConnectorTerminalNode;
+import component.terminalNode.TerminalNode;
+import component.terminalNode.interfaces.NodeCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 @OfferedInterfaces(offered = {CommunicationCI.class})
-@RequiredInterfaces(required = {CommunicationCI.class})
-
+@RequiredInterfaces(required = {CommunicationCI.class, NodeCI.class})
 public class Communication extends AbstractComponent
 {
 	
@@ -41,13 +42,15 @@ public class Communication extends AbstractComponent
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
 		voisins.add(address);
-		//this.doPortConnection(communicationInboundPortURI, COMMUNICATIONOUTBOUNDPORTURI, Connector.class.getCanonicalName());
+		this.doPortConnection(communicationInboundPortURI, TerminalNode.TERMINALNODEOUTBOUNDPORTURI, ConnectorTerminalNode.class.getCanonicalName());
+		//this.doPortConnection(COMMUNICATIONOUTBOUNDPORTURI, communicationInboundPortURI, Connector.class.getCanonicalName());
+		System.out.println("test");
 	}
 	
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
 		voisins.add(address);
-		this.doPortConnection(communicationInboundPortURI, routingInboundPortURI, Communication.class.getCanonicalName());
+		//this.doPortConnection(communicationInboundPortURI, routingInboundPortURI, Communication.class.getCanonicalName());
 	}
 	
 	public void transmitMessage(MessageI m) throws Exception

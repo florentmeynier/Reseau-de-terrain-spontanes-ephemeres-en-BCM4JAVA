@@ -1,8 +1,6 @@
 package component.communication.test;
 
 import component.communication.Communication;
-import component.communication.CommunicationInbound;
-import component.communication.CommunicationOutbound;
 import component.communication.Connector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
@@ -29,7 +27,7 @@ public class CVM extends AbstractCVM {
 	{
 		try {
 			CVM c = new CVM();
-			c.startStandardLifeCycle(10000L);
+			c.startStandardLifeCycle(5000L);
 			System.exit(0);
 		} catch(Exception e)
 		{

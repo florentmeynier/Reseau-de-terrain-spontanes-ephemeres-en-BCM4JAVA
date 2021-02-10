@@ -6,17 +6,26 @@ import java.util.Set;
 import component.registration.interfaces.NodeAddressI;
 import component.registration.interfaces.PositionI;
 import component.registration.interfaces.RegistrationCI;
+import component.terminalNode.interfaces.NodeCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 @OfferedInterfaces(offered = {RegistrationCI.class})
+@RequiredInterfaces(required = {NodeCI.class})
 public class Registration extends AbstractComponent 
 {
+	private RegistrationInbound inboundPort;
+	public static final String REGISTRATIONNODEINBOUNDPORTURI = "rip-uri";
+	
 	private Set<ConnectionInfo> tables;
 	
-	protected Registration() 
+	protected Registration() throws Exception 
 	{
 		super(1,0);
+		this.inboundPort = new RegistrationInbound(REGISTRATIONNODEINBOUNDPORTURI, this);
+		this.inboundPort.publishPort();
 	}
 	
 	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange) throws Exception
@@ -65,6 +74,17 @@ public class Registration extends AbstractComponent
 				break;
 			}
 		}
+	}
+	
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException
+	{
+		try {
+			this.inboundPort.unpublishPort();
+		}  catch (Exception e) {
+			throw new ComponentShutdownException(e);
+		}
+		super.shutdown();
 	}
 
 }
