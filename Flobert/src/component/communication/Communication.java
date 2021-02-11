@@ -9,8 +9,6 @@ import component.registration.NodeAddress;
 import component.registration.Position;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
-import component.terminalNode.ConnectorTerminalNode;
-import component.terminalNode.TerminalNode;
 import component.terminalNode.interfaces.NodeCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -42,7 +40,8 @@ public class Communication extends AbstractComponent
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
 		voisins.add(address);
-		this.doPortConnection(communicationInboundPortURI, TerminalNode.TERMINALNODEOUTBOUNDPORTURI, ConnectorTerminalNode.class.getCanonicalName());
+		System.out.println(communicationInboundPortURI);
+		this.doPortConnection(COMMUNICATIONOUTBOUNDPORTURI, communicationInboundPortURI, Connector.class.getCanonicalName());
 		//this.doPortConnection(COMMUNICATIONOUTBOUNDPORTURI, communicationInboundPortURI, Connector.class.getCanonicalName());
 		System.out.println("test");
 	}
@@ -75,7 +74,8 @@ public class Communication extends AbstractComponent
 		super.execute();
 		this.logMessage("test2");
 		try {
-			connect(new NodeAddress("0.0.0.1", new Position(0, 0), 5), "cip-02");
+			//AbstractComponent.createComponent(Communication.class.getCanonicalName(), new Object[] {});
+			connect(new NodeAddress("0.0.0.1", new Position(0, 0), 5), COMMUNICATIONINBOUNDPORTURI);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
