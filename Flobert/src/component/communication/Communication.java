@@ -20,19 +20,25 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 public class Communication extends AbstractComponent
 {
 	
-	private CommunicationInbound inboundPort;
-	private CommunicationOutbound outboundPort;
+	protected CommunicationInbound inboundPort;
+	protected CommunicationOutbound outboundPort;
 	public static final String COMMUNICATIONINBOUNDPORTURI = "cip-uri";
 	public static final String COMMUNICATIONOUTBOUNDPORTURI = "cop-uri";
+	public static int cpt = 0;
+	private final String INBOUNDPORTURI;
+	private final String OUTBOUNDPORTURI;
 	
 	private Set<NodeAddressI> voisins = new HashSet<>();
 	
 	protected Communication() throws Exception {
 		super(1, 0);
-		this.inboundPort = new CommunicationInbound(COMMUNICATIONINBOUNDPORTURI, this);
-		this.outboundPort = new CommunicationOutbound(COMMUNICATIONOUTBOUNDPORTURI, this);
+		this.INBOUNDPORTURI = COMMUNICATIONINBOUNDPORTURI + cpt;
+		this.OUTBOUNDPORTURI = COMMUNICATIONOUTBOUNDPORTURI + cpt;
+		this.inboundPort = new CommunicationInbound(INBOUNDPORTURI, this);
+		this.outboundPort = new CommunicationOutbound(OUTBOUNDPORTURI, this);
 		this.inboundPort.publishPort();
 		this.outboundPort.publishPort();
+		cpt++;
 		this.toggleLogging();
 		this.toggleTracing();
 	}
@@ -40,10 +46,7 @@ public class Communication extends AbstractComponent
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
 		voisins.add(address);
-		System.out.println(communicationInboundPortURI);
-		this.doPortConnection(COMMUNICATIONOUTBOUNDPORTURI, communicationInboundPortURI, Connector.class.getCanonicalName());
-		//this.doPortConnection(COMMUNICATIONOUTBOUNDPORTURI, communicationInboundPortURI, Connector.class.getCanonicalName());
-		System.out.println("test");
+		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, Connector.class.getCanonicalName());
 	}
 	
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
@@ -70,18 +73,12 @@ public class Communication extends AbstractComponent
 	@Override
 	public synchronized void execute() throws Exception
 	{
-		this.logMessage("test1");
 		super.execute();
-		this.logMessage("test2");
 		try {
-			//AbstractComponent.createComponent(Communication.class.getCanonicalName(), new Object[] {});
-			connect(new NodeAddress("0.0.0.1", new Position(0, 0), 5), COMMUNICATIONINBOUNDPORTURI);
+			this.outboundPort.connect(new NodeAddress("0.0.0.1", new Position(0, 0), 0), INBOUNDPORTURI);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		this.logMessage("test3");
-		this.logMessage("nb voisins " + voisins.size());
-		
 	}
 	
 	@Override
@@ -99,7 +96,7 @@ public class Communication extends AbstractComponent
 	@Override
 	public synchronized void finalise() throws Exception
 	{
-		this.doPortDisconnection(COMMUNICATIONOUTBOUNDPORTURI);
+		this.doPortDisconnection(this.outboundPort.getPortURI());
 		super.finalise();
 	}
 }

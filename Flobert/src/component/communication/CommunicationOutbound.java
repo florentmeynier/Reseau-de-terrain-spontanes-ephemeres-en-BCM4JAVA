@@ -5,6 +5,7 @@ import component.communication.interfaces.MessageI;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
 import fr.sorbonne_u.components.ComponentI;
+import fr.sorbonne_u.components.examples.pingpong.components.PingPongPlayer;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 
 public class CommunicationOutbound extends AbstractOutboundPort implements CommunicationCI {
@@ -21,7 +22,9 @@ public class CommunicationOutbound extends AbstractOutboundPort implements Commu
 
 	@Override
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
-		((CommunicationCI) this.getConnector()).connect(address, communicationInboundPortURI);
+		//this.getOwner().handleRequest(c -> ((Communication) c).connect(address, communicationInboundPortURI));
+		((Communication) this.getOwner()).connect(address, communicationInboundPortURI);
+		return;
 	}
 
 	@Override
