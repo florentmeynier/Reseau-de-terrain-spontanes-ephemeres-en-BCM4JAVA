@@ -14,10 +14,12 @@ public class RouteInfo
 		this.destination = destination;
 		this.numberOfHops = numberOfHops;
 	}
+	
 	public AddressI getDestination() 
 	{
 		return destination;
 	}
+	
 	public int getNumberOfHops() 
 	{
 		return numberOfHops;

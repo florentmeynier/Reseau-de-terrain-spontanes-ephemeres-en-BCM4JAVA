@@ -22,14 +22,12 @@ public class Message implements MessageI
 	@Override
 	public AddressI getAddress() 
 	{
-		// TODO Auto-generated method stub
 		return address;
 	}
 
 	@Override
 	public Serializable getContent() 
 	{
-		// TODO Auto-generated method stub
 		return content;
 	}
 
@@ -37,14 +35,12 @@ public class Message implements MessageI
 	public boolean stillAlive() 
 	
 	{
-		// TODO Auto-generated method stub
 		return (hops > 0);
 	} 
 
 	@Override
 	public void decrementHops() 
 	{
-		// TODO Auto-generated method stub
 		hops--;
 	}
 

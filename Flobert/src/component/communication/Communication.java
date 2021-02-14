@@ -9,6 +9,7 @@ import component.registration.NodeAddress;
 import component.registration.Position;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
+import component.routing.RouteInfo;
 import component.terminalNode.interfaces.NodeCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -29,6 +30,7 @@ public class Communication extends AbstractComponent
 	private final String OUTBOUNDPORTURI;
 	
 	private Set<NodeAddressI> voisins = new HashSet<>();
+	private Set<RouteInfo> routes = new HashSet<>();
 	
 	protected Communication() throws Exception {
 		super(1, 0);
@@ -52,6 +54,8 @@ public class Communication extends AbstractComponent
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
 		voisins.add(address);
+		RouteInfo r = new RouteInfo(address, 1);
+		routes.add(r);
 		//this.doPortConnection(communicationInboundPortURI, routingInboundPortURI, Communication.class.getCanonicalName());
 	}
 	
@@ -62,7 +66,12 @@ public class Communication extends AbstractComponent
 	
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
-		return true;
+		for(RouteInfo r : routes) {
+			if(r.getDestination().equals(address)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void ping()

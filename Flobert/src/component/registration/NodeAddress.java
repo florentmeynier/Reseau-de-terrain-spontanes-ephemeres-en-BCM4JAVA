@@ -30,7 +30,6 @@ public class NodeAddress implements NodeAddressI
 	@Override
 	public boolean equals(AddressI a) throws Exception 
 	{
-		// TODO Auto-generated method stub
 		if(!a.isNodeAddress())
 			return false;
 		NodeAddress address = (NodeAddress)  a;
