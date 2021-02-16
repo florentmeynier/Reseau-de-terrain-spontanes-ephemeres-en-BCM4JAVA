@@ -1,9 +1,9 @@
 package component.communication;
 
-import component.communication.interfaces.CommunicationCI;
-import component.communication.interfaces.MessageI;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
+import component.terminalNode.interfaces.CommunicationCI;
+import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 

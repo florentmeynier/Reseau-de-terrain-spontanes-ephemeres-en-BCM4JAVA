@@ -2,13 +2,12 @@ package component.registration;
 
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
-import component.registration.interfaces.PositionI;
 
 public class NodeAddress implements NodeAddressI 
 {
 	private String addr;
 	
-	public NodeAddress(String addr, PositionI pos, double portee) 
+	public NodeAddress(String addr) 
 	{
 		this.addr = addr;
 	}

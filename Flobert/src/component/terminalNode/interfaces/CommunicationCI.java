@@ -1,4 +1,4 @@
-package component.communication.interfaces;
+package component.terminalNode.interfaces;
 
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;

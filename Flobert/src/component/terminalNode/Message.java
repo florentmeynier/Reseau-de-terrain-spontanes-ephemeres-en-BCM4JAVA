@@ -1,9 +1,9 @@
-package component.communication;
+package component.terminalNode;
 
 import java.io.Serializable;
 
-import component.communication.interfaces.MessageI;
 import component.registration.interfaces.AddressI;
+import component.terminalNode.interfaces.MessageI;
 
 
 public class Message implements MessageI 

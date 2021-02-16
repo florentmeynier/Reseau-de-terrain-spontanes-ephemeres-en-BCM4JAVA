@@ -1,21 +1,18 @@
 package component.terminalNode;
 
-import java.util.Set;
 
-import component.communication.interfaces.CommunicationCI;
-import component.communication.interfaces.MessageI;
-import component.registration.ConnectionInfo;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
-import component.registration.interfaces.PositionI;
-import component.registration.interfaces.RegistrationCI;
+import component.terminalNode.interfaces.CommunicationCI;
+import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 
-public class ConnectorTerminalNode extends AbstractConnector implements CommunicationCI, RegistrationCI
+public class ConnectorTerminalNode extends AbstractConnector implements CommunicationCI
 {
 
 	@Override
-	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
+	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception 
+	{
 		((CommunicationCI) this.offering).connect(address, communicationInboundPortURI);
 	}
 
@@ -26,45 +23,22 @@ public class ConnectorTerminalNode extends AbstractConnector implements Communic
 	}
 
 	@Override
-	public void transmitMessage(MessageI m) throws Exception {
-		
+	public void transmitMessage(MessageI m) throws Exception 
+	{
+		((CommunicationCI) this.offering).transmitMessage(m);
+
 	}
 
 	@Override
-	public boolean hasRouteFor(AddressI address) throws Exception {
-		return false;
+	public boolean hasRouteFor(AddressI address) throws Exception 
+	{
+		return ((CommunicationCI) this.offering).hasRouteFor(address);
 	}
 
 	@Override
-	public void ping() {
-		
-	}
-
-	@Override
-	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String connectionInboundURI,
-			PositionI initialPosition, double initialRange) throws Exception {
-		// TODO Auto-generated method stub
-		return ((RegistrationCI)this.requiring).registerTerminalNode(address, connectionInboundURI, initialPosition, initialRange);
-	}
-
-	@Override
-	public Set<ConnectionInfo> registerAccessPoint(NodeAddressI address, String connectionInboundURI,
-			PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String connectionInboundURI,
-			PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void unregister(NodeAddressI address) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void ping() throws Exception
+	{
+		((CommunicationCI) this.offering).ping();
 	}
 	
 }

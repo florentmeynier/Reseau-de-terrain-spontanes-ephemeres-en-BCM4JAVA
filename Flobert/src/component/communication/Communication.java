@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import component.communication.interfaces.CommunicationCI;
-import component.communication.interfaces.MessageI;
 import component.registration.NodeAddress;
 import component.registration.Position;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
 import component.routing.RouteInfo;
+import component.terminalNode.interfaces.CommunicationCI;
+import component.terminalNode.interfaces.MessageI;
 import component.terminalNode.interfaces.NodeCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -104,7 +104,6 @@ public class Communication extends AbstractComponent
 	{
 		super.execute();
 		try {
-			this.outboundPort.connect(new NodeAddress("0.0.0.1", new Position(0, 0), 0), INBOUNDPORTURI);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -1,4 +1,4 @@
-package component.communication.interfaces;
+package component.terminalNode.interfaces;
 
 import java.io.Serializable;
 

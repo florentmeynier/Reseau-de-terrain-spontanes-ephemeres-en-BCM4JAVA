@@ -3,23 +3,20 @@ package component.registration;
 import java.util.HashSet;
 import java.util.Set;
 
-import component.communication.interfaces.CommunicationCI;
 import component.registration.interfaces.NodeAddressI;
 import component.registration.interfaces.PositionI;
 import component.registration.interfaces.RegistrationCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
-import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 @OfferedInterfaces(offered = {RegistrationCI.class})
-@RequiredInterfaces(required = {CommunicationCI.class})
 public class Registration extends AbstractComponent 
 {
-	private RegistrationInbound inboundPort;
+	protected RegistrationInbound inboundPort;
 	public static final String REGISTRATIONNODEINBOUNDPORTURI = "rip-uri";
 	
-	private Set<ConnectionInfo> tables;
+	private Set<ConnectionInfo> tables = new HashSet<>();
 	
 	protected Registration() throws Exception 
 	{
@@ -30,8 +27,16 @@ public class Registration extends AbstractComponent
 	
 	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange) throws Exception
 	{
-		return registerRoutingNode(address,connectionInboundURI,initialPosition,initialRange, null);
+		ConnectionInfo ci = new ConnectionInfo(address, connectionInboundURI, null, initialPosition, initialRange);
+		
+		if(tables.add(ci))
+		{
+			return tables;
+		}
+		return null;
+		
 	}
+	
 	public Set<ConnectionInfo> registerAccessPoint(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception
 	{
 		ConnectionInfo ci = new ConnectionInfo(address, connectionInboundURI, routingInboundPortURI, initialPosition, initialRange);
@@ -39,8 +44,7 @@ public class Registration extends AbstractComponent
 		{
 			return tables;
 		}
-		return null;
-		
+		return null;	
 	}
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception
 	{
