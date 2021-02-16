@@ -1,6 +1,9 @@
 package component.communication;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import component.communication.interfaces.CommunicationCI;
@@ -29,7 +32,8 @@ public class Communication extends AbstractComponent
 	private final String INBOUNDPORTURI;
 	private final String OUTBOUNDPORTURI;
 	
-	private Set<NodeAddressI> voisins = new HashSet<>();
+	private List<NodeAddressI> voisins = new ArrayList<>();
+	private List<String> voisinsURI = new ArrayList<>();
 	private Set<RouteInfo> routes = new HashSet<>();
 	
 	protected Communication() throws Exception {
@@ -48,6 +52,7 @@ public class Communication extends AbstractComponent
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
 		voisins.add(address);
+		voisinsURI.add(communicationInboundPortURI);
 		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, Connector.class.getCanonicalName());
 	}
 	
@@ -61,7 +66,22 @@ public class Communication extends AbstractComponent
 	
 	public void transmitMessage(MessageI m) throws Exception
 	{
+		/*Random rand = new Random();
+		int n = rand.nextInt(voisins.size());
+		m.decrementHops();
+		MessageI m2 = new Message (m.getAddress(),m.getContent(),m.getHops());
 		
+		for(int i = 0; i < n; i++)
+		{ 
+			int index = rand.nextInt(voisins.size());
+			
+			this.outboundPort.getClientPortURI();
+		}*/
+		if(m.stillAlive())
+		{
+			m.decrementHops();
+			this.outboundPort.transmitMessage(m);
+		}
 	}
 	
 	public boolean hasRouteFor(AddressI address) throws Exception

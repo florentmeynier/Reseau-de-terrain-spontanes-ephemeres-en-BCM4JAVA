@@ -8,6 +8,7 @@ public interface MessageI
 {
 	public AddressI getAddress();
 	public Serializable getContent();
+	public int getHops();
 	public boolean stillAlive();
 	public void decrementHops();
 }

@@ -3,17 +3,17 @@ package component.registration;
 import java.util.HashSet;
 import java.util.Set;
 
+import component.communication.interfaces.CommunicationCI;
 import component.registration.interfaces.NodeAddressI;
 import component.registration.interfaces.PositionI;
 import component.registration.interfaces.RegistrationCI;
-import component.terminalNode.interfaces.NodeCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 @OfferedInterfaces(offered = {RegistrationCI.class})
-@RequiredInterfaces(required = {NodeCI.class})
+@RequiredInterfaces(required = {CommunicationCI.class})
 public class Registration extends AbstractComponent 
 {
 	private RegistrationInbound inboundPort;

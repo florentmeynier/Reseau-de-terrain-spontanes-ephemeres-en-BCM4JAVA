@@ -44,4 +44,10 @@ public class Message implements MessageI
 		hops--;
 	}
 
+	@Override
+	public int getHops() {
+		// TODO Auto-generated method stub
+		return hops;
+	}
+
 }

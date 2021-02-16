@@ -12,11 +12,13 @@ public class CommunicationOutbound extends AbstractOutboundPort implements Commu
 
 	private static final long serialVersionUID = 1L;
 
-	public CommunicationOutbound(ComponentI owner) throws Exception {
+	public CommunicationOutbound(ComponentI owner) throws Exception 
+	{
 		super(CommunicationCI.class, owner);
 	}
 	
-	public CommunicationOutbound(String uri, ComponentI owner) throws Exception {
+	public CommunicationOutbound(String uri, ComponentI owner) throws Exception 
+	{
 		super(uri, CommunicationCI.class, owner);
 	}
 
@@ -34,7 +36,8 @@ public class CommunicationOutbound extends AbstractOutboundPort implements Commu
 	}
 
 	@Override
-	public void transmitMessage(MessageI m) throws Exception {
+	public void transmitMessage(MessageI m) throws Exception 
+	{
 		
 	}
 
