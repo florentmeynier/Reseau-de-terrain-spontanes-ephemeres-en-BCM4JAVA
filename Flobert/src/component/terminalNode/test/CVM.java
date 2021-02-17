@@ -41,9 +41,9 @@ public class CVM extends AbstractCVM
 		String rn2 = AbstractComponent.createComponent(RoutingNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.4"), new Position(10,10), 5.0});		
 		this.doPortConnection(rn2, (TerminalNode.cpt-1)+TerminalNode.SAMPLESTERMINALNODEOUTBOUNDPORTURI+(TerminalNode.cpt-1), Registration.REGISTRATIONNODEINBOUNDPORTURI , ConnectorRegistration.class.getCanonicalName());
 	
-		String apn1 = AbstractComponent.createComponent(AccessPointNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.5"), new Position(0,3), 10.0});		
+		String apn1 = AbstractComponent.createComponent(AccessPointNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.5"), new Position(1,3), 10.0});		
 		this.doPortConnection(apn1, (TerminalNode.cpt-1)+TerminalNode.SAMPLESTERMINALNODEOUTBOUNDPORTURI+(TerminalNode.cpt-1), Registration.REGISTRATIONNODEINBOUNDPORTURI , ConnectorRegistration.class.getCanonicalName());
-		String apn2 = AbstractComponent.createComponent(AccessPointNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.6"), new Position(0,4), 9.0});		
+		String apn2 = AbstractComponent.createComponent(AccessPointNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.6"), new Position(1,4), 9.0});		
 		this.doPortConnection(apn2, (TerminalNode.cpt-1)+TerminalNode.SAMPLESTERMINALNODEOUTBOUNDPORTURI+(TerminalNode.cpt-1), Registration.REGISTRATIONNODEINBOUNDPORTURI , ConnectorRegistration.class.getCanonicalName());
 		
 
@@ -56,7 +56,7 @@ public class CVM extends AbstractCVM
 		try 
 		{
 			CVM c = new CVM();
-			c.startStandardLifeCycle(2000L);
+			c.startStandardLifeCycle(20000L);
 			System.exit(0);
 		} catch(Exception e)
 		{

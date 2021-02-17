@@ -96,7 +96,7 @@ public class TerminalNode extends AbstractComponent
 			return;
 		}else
 		{
-			if(m.stillAlive())
+			if(m.stillAlive() && this.outboundPort.connected())
 			{
 				m.decrementHops();
 				this.outboundPort.transmitMessage(m);
@@ -126,9 +126,8 @@ public class TerminalNode extends AbstractComponent
 			{
 				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,2);
 				Set<ConnectionInfo> voisins = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
-				System.out.println("tn " + portee + " " + voisins.size());
 				if(voisins.isEmpty()) {
-					this.logMessage("Pas de voisin à qui transférer le message");
+					this.logMessage("Pas de voisin a qui transferer le message");
 					return;
 				}
 				int r = (new Random()).nextInt(voisins.size());
@@ -138,7 +137,6 @@ public class TerminalNode extends AbstractComponent
 					r = (new Random()).nextInt(voisins.size());
 					ci  = (ConnectionInfo) voisins.toArray()[r];
 				}
-				System.out.println(ci.getPortee());
 				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 				
 				this.transmitMessage(m);
@@ -168,7 +166,8 @@ public class TerminalNode extends AbstractComponent
 	@Override
 	public synchronized void finalise() throws Exception
 	{
-		if(this.outboundPort.connected()) {
+		if(this.outboundPort.connected()) 
+		{
 			this.doPortDisconnection(this.outboundPort.getPortURI());
 		}
 		this.doPortDisconnection(this.routboundPort.getPortURI());	

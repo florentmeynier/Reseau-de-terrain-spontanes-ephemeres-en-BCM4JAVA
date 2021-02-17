@@ -62,10 +62,9 @@ public class AccessPointNode extends TerminalNode
 			return;
 		}else
 		{
-			if(m.stillAlive())
+			if(m.stillAlive() && this.outboundPort.connected())
 			{
 				m.decrementHops();
-				System.out.println(m.getContent());
 				this.outboundPort.transmitMessage(m);
 			}
 		}
@@ -80,11 +79,11 @@ public class AccessPointNode extends TerminalNode
 		{	
 			MessageI m = new Message(new NodeAddress("0.0.0.2"), "tata" ,2);
 			Set<ConnectionInfo> voisins = this.routboundPort.registerAccessPoint(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ACCESSPOINTINBOUNDPORTURI);
-			if(voisins.isEmpty()) {
-				this.logMessage("Pas de voisin à qui transférer le message");
+			if(voisins.isEmpty()) 
+			{
+				this.logMessage("Pas de voisin a qui transferer le message");
 				return;
 			}
-			System.out.println("ap " + this.getPortee() + " " + voisins.size());
 			int r = (new Random()).nextInt(voisins.size());
 			ConnectionInfo ci = null;
 			while(ci == null)
@@ -93,9 +92,7 @@ public class AccessPointNode extends TerminalNode
 				ci  = (ConnectionInfo) voisins.toArray()[r];
 			}
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-			System.out.println("ap2 " + this.getPortee() + " " + ci.getPortee());
 			this.transmitMessage(m);
-			System.out.println("ap3 " + this.getPortee() + " " + voisins.size());
 			this.logMessage("message "+ m.getContent() +" transmis au voisin");
 
 			

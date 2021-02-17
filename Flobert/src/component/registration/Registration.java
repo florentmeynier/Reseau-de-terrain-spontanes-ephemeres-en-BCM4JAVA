@@ -73,16 +73,14 @@ public class Registration extends AbstractComponent
 	
 	private synchronized Set<ConnectionInfo> getInPortee(ConnectionInfo ci) throws Exception {
 		Set<ConnectionInfo> res = new HashSet<ConnectionInfo>();
-		for(ConnectionInfo c : tables) {
+		for(ConnectionInfo c : tables) 
+		{
 			if(ci.getPos().distance(c.getPos()) <= ci.getPortee()) {
 				res.add(c);
 			}
 		}
-		if(tables.add(ci))
-		{
-			return res;
-		}
-		return new HashSet<ConnectionInfo>();
+		tables.add(ci);
+		return res;
 	}
 	
 	@Override
