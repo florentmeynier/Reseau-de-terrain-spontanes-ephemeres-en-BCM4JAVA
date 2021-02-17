@@ -41,8 +41,7 @@ public class TerminalNodeInbound extends AbstractInboundPort implements Communic
 	@Override
 	public void transmitMessage(MessageI m) throws Exception 
 	{
-		((TerminalNode)this.getOwner()).transmitMessage(m);
-		//this.getOwner().handleRequest(c -> {System.out.println("5");((TerminalNode) c).transmitMessage(m);System.out.println("6"); return null;});
+		this.getOwner().handleRequest(c -> {((TerminalNode) c).transmitMessage(m); return null;});
 
 	}
 
