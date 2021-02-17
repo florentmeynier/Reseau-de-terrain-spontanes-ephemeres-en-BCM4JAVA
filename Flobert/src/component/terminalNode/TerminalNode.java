@@ -78,7 +78,7 @@ public class TerminalNode extends AbstractComponent
 	}
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
-		neighbors.add(new ConnectionInfo(address,communicationInboundPortURI,null,null,0));
+		neighbours.add(new ConnectionInfo(address,communicationInboundPortURI,null,null,0));
 		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, ConnectorTerminalNode.class.getCanonicalName());
 	}
 	
