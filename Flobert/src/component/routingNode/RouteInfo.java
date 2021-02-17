@@ -1,4 +1,4 @@
-package component.routing;
+package component.routingNode;
 
 import component.registration.interfaces.AddressI;
 

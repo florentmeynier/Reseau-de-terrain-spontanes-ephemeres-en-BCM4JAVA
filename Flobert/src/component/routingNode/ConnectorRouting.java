@@ -3,8 +3,7 @@ package component.routingNode;
 import java.util.Set;
 
 import component.registration.interfaces.NodeAddressI;
-import component.routing.RouteInfo;
-import component.routing.interfaces.RoutingCI;
+import component.routingNode.interfaces.RoutingCI;
 import component.terminalNode.ConnectorTerminalNode;
 
 public class ConnectorRouting extends ConnectorTerminalNode implements RoutingCI 

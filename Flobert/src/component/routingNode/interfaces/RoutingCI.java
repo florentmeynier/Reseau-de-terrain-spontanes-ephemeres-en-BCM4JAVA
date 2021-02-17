@@ -1,9 +1,9 @@
-package component.routing.interfaces;
+package component.routingNode.interfaces;
 
 import java.util.Set;
 
 import component.registration.interfaces.NodeAddressI;
-import component.routing.RouteInfo;
+import component.routingNode.RouteInfo;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
