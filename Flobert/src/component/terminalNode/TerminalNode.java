@@ -88,7 +88,6 @@ public class TerminalNode extends AbstractComponent
 	
 	public void transmitMessage(MessageI m) throws Exception
 	{
-		this.logMessage("message vivant ? " + m.stillAlive());
 		
 		if(m.getAddress().equals(addr))
 		{
@@ -98,6 +97,8 @@ public class TerminalNode extends AbstractComponent
 		{
 			if(m.stillAlive() && this.outboundPort.connected())
 			{
+				this.logMessage("message vivant ? " + m.stillAlive());
+
 				m.decrementHops();
 				this.outboundPort.transmitMessage(m);
 			}

@@ -55,7 +55,6 @@ public class RoutingNode extends TerminalNode
 	
 	public void transmitMessage(MessageI m) throws Exception
 	{
-		this.logMessage("message vivant ? " + m.stillAlive());
 		if(m.getAddress().equals(this.getAddr()))
 		{
 			this.logMessage("message reçu " + m.getContent());
@@ -64,6 +63,7 @@ public class RoutingNode extends TerminalNode
 		{
 			if(m.stillAlive() && this.outboundPort.connected())
 			{
+				this.logMessage("message vivant ? " + m.stillAlive());
 				m.decrementHops();
 				this.outboundPort.transmitMessage(m);
 			}

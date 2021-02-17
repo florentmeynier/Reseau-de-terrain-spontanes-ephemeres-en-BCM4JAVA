@@ -54,7 +54,6 @@ public class AccessPointNode extends TerminalNode
 	
 	public void transmitMessage(MessageI m) throws Exception
 	{
-		this.logMessage("message vivant ? " + m.stillAlive());
 		
 		if(m.getAddress().equals(this.getAddr()))
 		{
@@ -64,6 +63,7 @@ public class AccessPointNode extends TerminalNode
 		{
 			if(m.stillAlive() && this.outboundPort.connected())
 			{
+				this.logMessage("message vivant ? " + m.stillAlive());
 				m.decrementHops();
 				this.outboundPort.transmitMessage(m);
 			}
@@ -91,7 +91,9 @@ public class AccessPointNode extends TerminalNode
 				r = (new Random()).nextInt(voisins.size());
 				ci  = (ConnectionInfo) voisins.toArray()[r];
 			}
+			
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+			
 			this.transmitMessage(m);
 			this.logMessage("message "+ m.getContent() +" transmis au voisin");
 
