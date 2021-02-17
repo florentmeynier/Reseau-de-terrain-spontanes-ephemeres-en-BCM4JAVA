@@ -43,7 +43,8 @@ public class RoutingNode extends TerminalNode
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
 
-		voisin = address;
+		neighbors.add(new ConnectionInfo(address,communicationInboundPortURI,routingInboundPortURI,null,0));
+
 		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, ConnectorRouting.class.getCanonicalName());
 
 	}

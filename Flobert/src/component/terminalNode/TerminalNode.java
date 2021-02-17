@@ -1,6 +1,7 @@
 package component.terminalNode;
 
 
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class TerminalNode extends AbstractComponent
 	private PositionI pos;
 	private double portee;
 	
-	protected NodeAddressI voisin;
+	protected Set<ConnectionInfo> neighbours = new HashSet<>();
 	
 	protected TerminalNode(NodeAddressI addr, PositionI pos, double portee) throws Exception 
 	{
@@ -77,7 +78,7 @@ public class TerminalNode extends AbstractComponent
 	}
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
-		voisin = address;
+		neighbors.add(new ConnectionInfo(address,communicationInboundPortURI,null,null,0));
 		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, ConnectorTerminalNode.class.getCanonicalName());
 	}
 	
