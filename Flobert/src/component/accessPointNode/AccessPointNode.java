@@ -77,7 +77,7 @@ public class AccessPointNode extends TerminalNode
 		
 		try
 		{	
-			MessageI m = new Message(new NodeAddress("0.0.0.2"), "tata" ,2);
+			MessageI m = new Message(new NodeAddress("0.0.0.4"), "tata" , 4);
 			Set<ConnectionInfo> voisins = this.routboundPort.registerAccessPoint(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ACCESSPOINTINBOUNDPORTURI);
 			if(voisins.isEmpty()) 
 			{

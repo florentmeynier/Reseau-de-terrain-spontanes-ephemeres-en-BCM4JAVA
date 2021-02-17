@@ -82,7 +82,7 @@ public class RoutingNode extends TerminalNode
 		
 		try
 		{	
-			MessageI m = new Message(new NodeAddress("0.0.0.5"), "toto" ,3);
+			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" ,3);
 			Set<ConnectionInfo> voisins =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
 			if(voisins.isEmpty()) {
 				this.logMessage("Pas de voisin a qui transferer le message");
