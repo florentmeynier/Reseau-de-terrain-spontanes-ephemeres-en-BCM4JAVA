@@ -49,7 +49,7 @@ public class Registration extends AbstractComponent
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception
 	{
 		ConnectionInfo ci = new ConnectionInfo(address, connectionInboundURI, routingInboundPortURI, initialPosition, initialRange);
-		Set<ConnectionInfo> res = new HashSet<>();
+		/*Set<ConnectionInfo> res = new HashSet<>();
 		
 		for(ConnectionInfo c : tables)
 		{
@@ -60,10 +60,10 @@ public class Registration extends AbstractComponent
 					res.add(c);
 				}
 			}
-		}
+		}*/
 		if(tables.add(ci))
 		{
-			return res;
+			return tables;
 		}
 		return null;
 	}

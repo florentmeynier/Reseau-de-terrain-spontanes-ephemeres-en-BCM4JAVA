@@ -1,12 +1,17 @@
 package component.terminalNode;
 
 
+import java.util.Random;
+import java.util.Set;
+
+import component.accessPointNode.AccessPointNode;
+import component.registration.ConnectionInfo;
 import component.registration.NodeAddress;
-import component.registration.Position;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
 import component.registration.interfaces.PositionI;
 import component.registration.interfaces.RegistrationCI;
+import component.routingNode.RoutingNode;
 import component.terminalNode.interfaces.CommunicationCI;
 import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.AbstractComponent;
@@ -25,7 +30,7 @@ public class TerminalNode extends AbstractComponent
 	public static final String SAMPLESTERMINALNODEINBOUNDPORTURI = "tnip-uri";
 	public static final String SAMPLESTERMINALNODEOUTBOUNDPORTURI = "tnop-uri";
 	public static int cpt = 0;
-	private final String TERMINALNODEINBOUNDPORTURI;
+	protected final String TERMINALNODEINBOUNDPORTURI;
 	private final String TERMINALNODEOUTBOUNDPORTURI;
 	private final String TERMINALNODEROUTBOUNDPORTURI;
 	
@@ -33,8 +38,7 @@ public class TerminalNode extends AbstractComponent
 	private PositionI pos;
 	private double portee;
 	
-	@SuppressWarnings("unused")
-	private NodeAddressI voisin;
+	protected NodeAddressI voisin;
 	
 	protected TerminalNode(NodeAddressI addr, PositionI pos, double portee) throws Exception 
 	{
@@ -84,8 +88,11 @@ public class TerminalNode extends AbstractComponent
 	
 	public void transmitMessage(MessageI m) throws Exception
 	{
+		this.logMessage("message vivant ? " + m.stillAlive());
+		
 		if(m.getAddress().equals(addr))
 		{
+			this.logMessage("message reçu " + m.getContent());
 			return;
 		}else
 		{
@@ -111,23 +118,22 @@ public class TerminalNode extends AbstractComponent
 	public synchronized void execute() throws Exception
 	{
 		super.execute();
+		
 		try 
 		{
-			this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
-			NodeAddressI addr = new NodeAddress("0.0.0.2");
-			PositionI pos = new Position(0,1);
-			double range = 10.0;
-			AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {addr, pos, range});
-			this.routboundPort.registerTerminalNode(addr, SAMPLESTERMINALNODEINBOUNDPORTURI+(cpt-1), pos, portee);
-			this.connect(addr, SAMPLESTERMINALNODEINBOUNDPORTURI+(cpt-1));
-		
-			MessageI m = new Message(addr, "coco" ,2);
 			
-			this.logMessage("nb hops " + m.getHops());
-			
-			this.transmitMessage(m);
-		
-			this.logMessage("nb hops " + m.getHops());
+			if(!(this instanceof RoutingNode) && !(this instanceof AccessPointNode))
+			{
+				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,2);
+				Set<ConnectionInfo> voisins = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
+				int r = (new Random()).nextInt(voisins.size());
+				ConnectionInfo ci = (ConnectionInfo) voisins.toArray()[r];
+				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+				
+				this.transmitMessage(m);
+				this.logMessage("message "+ m.getContent() +" transmis au voisin");
+
+			}
 			
 		} catch(Exception e) 
 		{
@@ -151,15 +157,8 @@ public class TerminalNode extends AbstractComponent
 	@Override
 	public synchronized void finalise() throws Exception
 	{
-		if(this.isPortConnected(this.outboundPort.getPortURI()))
-		{
-			this.doPortDisconnection(this.outboundPort.getPortURI());
-		}
-		
-		if(this.isPortConnected(this.routboundPort.getPortURI()))
-		{
-			this.doPortDisconnection(this.routboundPort.getPortURI());
-		}		
+		this.doPortDisconnection(this.outboundPort.getPortURI());
+		this.doPortDisconnection(this.routboundPort.getPortURI());	
 		
 		super.finalise();
 		
