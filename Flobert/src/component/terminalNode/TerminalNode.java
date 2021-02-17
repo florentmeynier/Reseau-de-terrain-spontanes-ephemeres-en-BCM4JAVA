@@ -127,7 +127,12 @@ public class TerminalNode extends AbstractComponent
 				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,2);
 				Set<ConnectionInfo> voisins = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
 				int r = (new Random()).nextInt(voisins.size());
-				ConnectionInfo ci = (ConnectionInfo) voisins.toArray()[r];
+				ConnectionInfo ci = null;
+				while(ci == null)
+				{
+					r = (new Random()).nextInt(voisins.size());
+					ci  = (ConnectionInfo) voisins.toArray()[r];
+				}
 				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 				
 				this.transmitMessage(m);

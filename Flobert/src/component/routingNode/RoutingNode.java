@@ -86,7 +86,12 @@ public class RoutingNode extends TerminalNode
 			MessageI m = new Message(new NodeAddress("0.0.0.5"), "toto" ,3);
 			Set<ConnectionInfo> voisins =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
 			int r = (new Random()).nextInt(voisins.size());
-			ConnectionInfo ci = (ConnectionInfo) voisins.toArray()[r];
+			ConnectionInfo ci = null;
+			while(ci == null)
+			{
+				r = (new Random()).nextInt(voisins.size());
+				ci  = (ConnectionInfo) voisins.toArray()[r];
+			}
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 	
 

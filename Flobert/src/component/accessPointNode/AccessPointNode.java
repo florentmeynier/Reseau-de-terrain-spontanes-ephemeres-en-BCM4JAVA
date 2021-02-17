@@ -81,7 +81,12 @@ public class AccessPointNode extends TerminalNode
 			MessageI m = new Message(new NodeAddress("0.0.0.2"), "tata" ,2);
 			Set<ConnectionInfo> voisins = this.routboundPort.registerAccessPoint(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ACCESSPOINTINBOUNDPORTURI);
 			int r = (new Random()).nextInt(voisins.size());
-			ConnectionInfo ci = (ConnectionInfo) voisins.toArray()[r];
+			ConnectionInfo ci = null;
+			while(ci == null)
+			{
+				r = (new Random()).nextInt(voisins.size());
+				ci  = (ConnectionInfo) voisins.toArray()[r];
+			}
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 	
 			this.transmitMessage(m);
