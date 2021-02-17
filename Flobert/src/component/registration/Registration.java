@@ -25,26 +25,21 @@ public class Registration extends AbstractComponent
 		this.inboundPort.publishPort();
 	}
 	
-	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange) throws Exception
+	public synchronized Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange) throws Exception
 	{
 		ConnectionInfo ci = new ConnectionInfo(address, connectionInboundURI, null, initialPosition, initialRange);
 		
-		if(tables.add(ci))
-		{
-			return tables;
-		}
-		return null;
+		
+		return getInPortee(ci);
+		
 		
 	}
 	
 	public Set<ConnectionInfo> registerAccessPoint(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception
 	{
 		ConnectionInfo ci = new ConnectionInfo(address, connectionInboundURI, routingInboundPortURI, initialPosition, initialRange);
-		if(tables.add(ci))
-		{
-			return tables;
-		}
-		return null;	
+		
+		return getInPortee(ci);
 	}
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception
 	{
@@ -61,11 +56,7 @@ public class Registration extends AbstractComponent
 				}
 			}
 		}*/
-		if(tables.add(ci))
-		{
-			return tables;
-		}
-		return null;
+			return getInPortee(ci);
 	}
 	
 	public void unregister(NodeAddressI address) throws Exception
@@ -78,6 +69,20 @@ public class Registration extends AbstractComponent
 				break;
 			}
 		}
+	}
+	
+	private synchronized Set<ConnectionInfo> getInPortee(ConnectionInfo ci) throws Exception {
+		Set<ConnectionInfo> res = new HashSet<ConnectionInfo>();
+		for(ConnectionInfo c : tables) {
+			if(ci.getPos().distance(c.getPos()) <= ci.getPortee()) {
+				res.add(c);
+			}
+		}
+		if(tables.add(ci))
+		{
+			return res;
+		}
+		return new HashSet<ConnectionInfo>();
 	}
 	
 	@Override
