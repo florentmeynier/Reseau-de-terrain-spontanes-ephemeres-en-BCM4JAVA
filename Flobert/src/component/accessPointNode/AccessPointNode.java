@@ -62,11 +62,16 @@ public class AccessPointNode extends TerminalNode
 			return;
 		}else
 		{
-			if(m.stillAlive() && this.outboundPort.connected())
+			if(this.outboundPort.connected())
 			{
-				this.logMessage("message vivant ? " + m.stillAlive());
-				m.decrementHops();
-				this.outboundPort.transmitMessage(m);
+				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
+
+				if(m.stillAlive())
+				{
+					m.decrementHops();
+					this.outboundPort.transmitMessage(m);
+					this.logMessage("message "+ m.getContent() +" transmis au voisin");
+				}
 			}
 		}
 	}
@@ -96,7 +101,6 @@ public class AccessPointNode extends TerminalNode
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 			
 			this.transmitMessage(m);
-			this.logMessage("message "+ m.getContent() +" transmis au voisin");
 
 			
 

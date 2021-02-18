@@ -62,11 +62,16 @@ public class RoutingNode extends TerminalNode
 			return;
 		}else
 		{
-			if(m.stillAlive() && this.outboundPort.connected())
+			if(this.outboundPort.connected())
 			{
-				this.logMessage("message vivant ? " + m.stillAlive());
-				m.decrementHops();
-				this.outboundPort.transmitMessage(m);
+				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
+
+				if(m.stillAlive())
+				{
+					m.decrementHops();
+					this.outboundPort.transmitMessage(m);
+					this.logMessage("message "+ m.getContent() +" transmis au voisin");
+				}
 			}
 		}
 	}
@@ -83,7 +88,7 @@ public class RoutingNode extends TerminalNode
 		
 		try
 		{	
-			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" ,3);
+			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" , 2);
 			Set<ConnectionInfo> voisins =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
 			if(voisins.isEmpty()) {
 				this.logMessage("Pas de voisin a qui transferer le message");
@@ -99,10 +104,7 @@ public class RoutingNode extends TerminalNode
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 	
 
-			this.transmitMessage(m);
-			this.logMessage("message "+ m.getContent() +" transmis au voisin");
-			
-			
+			this.transmitMessage(m);			
 
 
 		}catch (Exception e)
