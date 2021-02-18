@@ -92,7 +92,7 @@ public class TerminalNode extends AbstractComponent
 		
 		if(m.getAddress().equals(addr))
 		{
-			this.logMessage("message reçu " + m.getContent());
+			this.logMessage("message recu " + m.getContent());
 			return;
 		}else
 		{
@@ -134,6 +134,7 @@ public class TerminalNode extends AbstractComponent
 				Set<ConnectionInfo> voisins = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
 				if(voisins.isEmpty()) {
 					this.logMessage("Pas de voisin a qui transferer le message");
+					//this.routboundPort.unregister(getAddr());
 					return;
 				}
 				int r = (new Random()).nextInt(voisins.size());
@@ -148,6 +149,10 @@ public class TerminalNode extends AbstractComponent
 				this.transmitMessage(m);
 
 			}
+			
+			/*Thread.sleep(500);
+			
+			this.routboundPort.unregister(getAddr());*/
 			
 		} catch(Exception e) 
 		{

@@ -33,7 +33,6 @@ public class RoutingNode extends TerminalNode
 	
 	protected RoutingNode(NodeAddressI addr, PositionI pos, double portee) throws Exception 
 	{
-		// TODO Auto-generated constructor stub
 		super(addr,pos,portee);
 		this.ROUTINGINBOUNDPORTURI = SAMPLESROUTINGNODEINBOUNDPORTURI + (cpt-1);
 		this.rinboundPort = new RoutingNodeInboundPort(this.ROUTINGINBOUNDPORTURI,this);
@@ -58,7 +57,7 @@ public class RoutingNode extends TerminalNode
 	{
 		if(m.getAddress().equals(this.getAddr()))
 		{
-			this.logMessage("message reçu " + m.getContent());
+			this.logMessage("message recu " + m.getContent());
 			return;
 		}else
 		{

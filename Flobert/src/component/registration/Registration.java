@@ -59,7 +59,7 @@ public class Registration extends AbstractComponent
 			return getInPortee(ci);
 	}
 	
-	public void unregister(NodeAddressI address) throws Exception
+	public synchronized void unregister(NodeAddressI address) throws Exception
 	{
 		for(ConnectionInfo c : tables)
 		{

@@ -58,7 +58,7 @@ public class AccessPointNode extends TerminalNode
 		
 		if(m.getAddress().equals(this.getAddr()))
 		{
-			this.logMessage("message reçu " + m.getContent());
+			this.logMessage("message recu " + m.getContent());
 			return;
 		}else
 		{
@@ -101,9 +101,6 @@ public class AccessPointNode extends TerminalNode
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 			
 			this.transmitMessage(m);
-
-			
-
 			
 		}catch (Exception e)
 		{
