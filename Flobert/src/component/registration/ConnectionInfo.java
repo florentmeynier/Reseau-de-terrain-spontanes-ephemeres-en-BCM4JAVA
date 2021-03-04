@@ -23,7 +23,11 @@ public class ConnectionInfo
 	
 	public boolean isRouting()
 	{
-		return true;
+		if(routingInboundURI != null)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	public NodeAddressI getAddress() 

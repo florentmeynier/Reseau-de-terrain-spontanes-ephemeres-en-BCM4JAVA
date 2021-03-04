@@ -12,6 +12,7 @@ import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
 import component.registration.interfaces.PositionI;
 import component.registration.interfaces.RegistrationCI;
+import component.routingNode.RouteInfo;
 import component.routingNode.RoutingNode;
 import component.terminalNode.interfaces.CommunicationCI;
 import component.terminalNode.interfaces.MessageI;
@@ -40,6 +41,7 @@ public class TerminalNode extends AbstractComponent
 	private double portee;
 	
 	protected Set<ConnectionInfo> neighbours = new HashSet<>();
+	protected Set<RouteInfo> routes = new HashSet<>();
 	
 	protected TerminalNode(NodeAddressI addr, PositionI pos, double portee) throws Exception 
 	{
@@ -112,7 +114,16 @@ public class TerminalNode extends AbstractComponent
 	
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
-		return true;
+		for(ConnectionInfo ci : neighbours)
+		{
+			if(ci.getAddress().equals(address))
+			{
+				routes.add(new RouteInfo(ci.getAddress(),1));
+				return true;
+			}
+			
+		}
+		return false;
 	}
 	
 	public void ping() throws Exception
@@ -131,18 +142,18 @@ public class TerminalNode extends AbstractComponent
 			if(!(this instanceof RoutingNode) && !(this instanceof AccessPointNode))
 			{
 				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,2);
-				Set<ConnectionInfo> voisins = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
-				if(voisins.isEmpty()) {
+				neighbours= this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
+				if(neighbours.isEmpty()) {
 					this.logMessage("Pas de voisin a qui transferer le message");
 					//this.routboundPort.unregister(getAddr());
 					return;
 				}
-				int r = (new Random()).nextInt(voisins.size());
+				int r = (new Random()).nextInt(neighbours.size());
 				ConnectionInfo ci = null;
 				while(ci == null)
 				{
-					r = (new Random()).nextInt(voisins.size());
-					ci  = (ConnectionInfo) voisins.toArray()[r];
+					r = (new Random()).nextInt(neighbours.size());
+					ci  = (ConnectionInfo) neighbours.toArray()[r];
 				}
 				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 				

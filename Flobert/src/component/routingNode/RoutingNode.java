@@ -5,6 +5,7 @@ import java.util.Set;
 
 import component.registration.ConnectionInfo;
 import component.registration.NodeAddress;
+import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
 import component.registration.interfaces.PositionI;
 import component.registration.interfaces.RegistrationCI;
@@ -48,9 +49,16 @@ public class RoutingNode extends TerminalNode
 
 	}
 	
-	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> route) throws Exception
+	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
-		return;
+		for(RouteInfo ri : routes)
+		{
+			if(ri.getDestination().equals(neighbour))
+			{
+				ri.setNumberOfHops(ri.getNumberOfHops()+1);
+			}
+		}
+		
 	}
 	
 	public void transmitMessage(MessageI m) throws Exception
@@ -75,6 +83,24 @@ public class RoutingNode extends TerminalNode
 		}
 	}
 	
+	public boolean hasRouteFor(AddressI address) throws Exception
+	{
+		for(ConnectionInfo ci : neighbours)
+		{
+			if(ci.getAddress().equals(address))
+			{
+				routes.add(new RouteInfo(ci.getAddress(),1));
+				return true;
+			}
+			if(ci.isRouting())
+			{
+				updateRouting(ci.getAddress(),routes);
+			}
+			
+		}
+		return false;
+	}
+	
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{
 		return;
@@ -88,17 +114,17 @@ public class RoutingNode extends TerminalNode
 		try
 		{	
 			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" , 2);
-			Set<ConnectionInfo> voisins =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
-			if(voisins.isEmpty()) {
+			neighbours =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
+			if(neighbours.isEmpty()) {
 				this.logMessage("Pas de voisin a qui transferer le message");
 				return;
 			}
-			int r = (new Random()).nextInt(voisins.size());
+			int r = (new Random()).nextInt(neighbours.size());
 			ConnectionInfo ci = null;
 			while(ci == null)
 			{
-				r = (new Random()).nextInt(voisins.size());
-				ci  = (ConnectionInfo) voisins.toArray()[r];
+				r = (new Random()).nextInt(neighbours.size());
+				ci  = (ConnectionInfo) neighbours.toArray()[r];
 			}
 			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 	
