@@ -84,6 +84,7 @@ public class RoutingNode extends TerminalNode
 				parcouru = false;
 			}
 		}
+		this.routes.add(new RouteInfo(neighbour,1));
 		
 	}
 	
