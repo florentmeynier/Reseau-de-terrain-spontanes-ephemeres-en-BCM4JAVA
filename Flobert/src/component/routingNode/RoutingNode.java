@@ -27,8 +27,11 @@ public class RoutingNode extends TerminalNode
 	
 	
 	public static final String SAMPLESROUTINGNODEINBOUNDPORTURI = "rip-uri";
+	public static final String SAMPLESROUTINGNODEOUTBOUNDPORTURI = "rop-uri";
 	private final String ROUTINGINBOUNDPORTURI;
+	private final String ROUTINGOUTBOUNDPORTURI;
 	protected RoutingNodeInboundPort rinboundPort;
+	protected RoutingOutboundPort rtoutboundPort;
 	
 
 	
@@ -36,26 +39,49 @@ public class RoutingNode extends TerminalNode
 	{
 		super(addr,pos,portee);
 		this.ROUTINGINBOUNDPORTURI = SAMPLESROUTINGNODEINBOUNDPORTURI + (cpt-1);
+		this.ROUTINGOUTBOUNDPORTURI = SAMPLESROUTINGNODEOUTBOUNDPORTURI + (cpt-1);
 		this.rinboundPort = new RoutingNodeInboundPort(this.ROUTINGINBOUNDPORTURI,this);
+		this.rtoutboundPort = new RoutingOutboundPort(this.ROUTINGOUTBOUNDPORTURI,this);
 		this.rinboundPort.publishPort();
+		this.rtoutboundPort.publishPort();
 	}
 	
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
-
-		neighbours.add(new ConnectionInfo(address,communicationInboundPortURI,routingInboundPortURI,null,0));
-
-		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, ConnectorRouting.class.getCanonicalName());
-
+		if(routingInboundPortURI == null)
+		{
+			super.connect(address, communicationInboundPortURI);
+		}else
+		{
+			this.doPortConnection(this.rtoutboundPort.getPortURI(), routingInboundPortURI, ConnectorRouting.class.getCanonicalName());
+			this.rtoutboundPort.updateRouting(this.getAddr(), this.routes);
+		}
+		
 	}
 	
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
-		for(RouteInfo ri : routes)
+		boolean parcouru = false;
+		for (RouteInfo ri : routes)
 		{
-			if(ri.getDestination().equals(neighbour))
+			for(RouteInfo mri : this.routes)
 			{
-				ri.setNumberOfHops(ri.getNumberOfHops()+1);
+				if(ri.getDestination().equals(mri.getDestination()))
+				{
+					if(ri.getNumberOfHops()+1 < mri.getNumberOfHops())
+					{
+						this.routes.remove(mri);
+						this.routes.add(ri);
+					}
+					parcouru = false;
+					break;
+				}
+				parcouru = true;
+			}
+			if(parcouru)
+			{
+				this.routes.add(new RouteInfo(ri.getDestination(),ri.getNumberOfHops()+1));
+				parcouru = false;
 			}
 		}
 		
@@ -75,6 +101,12 @@ public class RoutingNode extends TerminalNode
 
 				if(m.stillAlive())
 				{
+					if(this.outboundPort.hasRouteFor(m.getAddress()))
+					{
+						m.decrementHops();
+						this.outboundPort.transmitMessage(m);
+						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+					}
 					m.decrementHops();
 					this.outboundPort.transmitMessage(m);
 					this.logMessage("message "+ m.getContent() +" transmis au voisin");
@@ -85,18 +117,40 @@ public class RoutingNode extends TerminalNode
 	
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
-		for(ConnectionInfo ci : neighbours)
+		int minHops = Integer.MAX_VALUE;
+		ConnectionInfo tmp = null;
+		for(RouteInfo ri : routes)
 		{
-			if(ci.getAddress().equals(address))
+			if(ri.getDestination().equals(address))
 			{
-				routes.add(new RouteInfo(ci.getAddress(),1));
-				return true;
+				for(ConnectionInfo ci : neighbours)
+				{
+					if(ci.getAddress().equals(ri.getDestination()))
+					{
+						this.doPortDisconnection(this.outboundPort.getPortURI());
+						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+						return true;
+					}else
+					{
+						if(ci.isRouting())
+						{
+							if(ri.getNumberOfHops() < minHops)
+							{
+								tmp = ci;
+								minHops = ri.getNumberOfHops();
+							}
+						}
+					}
+				}
+				
 			}
-			if(ci.isRouting())
-			{
-				updateRouting(ci.getAddress(),routes);
-			}
+		}
+		if(tmp != null)
+		{
 			
+			this.doPortDisconnection(this.outboundPort.getPortURI());
+			this.connect(tmp.getAddress(), tmp.getCommunicationInboundPortURI());	
+			return true;
 		}
 		return false;
 	}
@@ -118,6 +172,18 @@ public class RoutingNode extends TerminalNode
 			if(neighbours.isEmpty()) {
 				this.logMessage("Pas de voisin a qui transferer le message");
 				return;
+			}
+			for(ConnectionInfo ci : neighbours)
+			{
+				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+				if(this.hasRouteFor(m.getAddress()))
+				{
+					this.outboundPort.transmitMessage(m);
+					return;
+				}else
+				{
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+				}
 			}
 			int r = (new Random()).nextInt(neighbours.size());
 			ConnectionInfo ci = null;
@@ -144,6 +210,7 @@ public class RoutingNode extends TerminalNode
 		try 
 		{
 			this.rinboundPort.unpublishPort();
+			this.rtoutboundPort.unpublishPort();
 			
 		}  catch (Exception e) {
 			throw new ComponentShutdownException(e);
@@ -153,7 +220,11 @@ public class RoutingNode extends TerminalNode
 	
 	@Override
 	public synchronized void finalise() throws Exception
-	{		
+	{
+		if(this.rtoutboundPort.connected())
+		{
+			this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+		}
 		super.finalise();
 		
 	}

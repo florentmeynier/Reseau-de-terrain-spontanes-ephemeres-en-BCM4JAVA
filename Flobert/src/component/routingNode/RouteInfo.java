@@ -25,10 +25,5 @@ public class RouteInfo
 		return numberOfHops;
 	}
 
-	public void setNumberOfHops(int nb) 
-	{
-		// TODO Auto-generated method stub
-		this.numberOfHops = nb;
-	}
 	
 }
