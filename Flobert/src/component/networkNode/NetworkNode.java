@@ -80,7 +80,7 @@ public class NetworkNode extends AbstractComponent
 		try
 		{
 			transmitAddress(this.addr);
-			MessageI m = new Message(new NetworkAddress("1.0.0.4"), "coucou" , 4);
+			MessageI m = new Message(new NetworkAddress("1.0.0.4"), "coucou" , 10);
 			if(this.outboundPort.connected())
 			{
 				transmitMessage(m);

@@ -173,11 +173,12 @@ public class AccessPointNode extends TerminalNode
 
 				if(m.stillAlive())
 				{
-					if(this.outboundPort.hasRouteFor(m.getAddress()))
+					if(this.hasRouteFor(m.getAddress()))
 					{
 						m.decrementHops();
 						this.outboundPort.transmitMessage(m);
 						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+						return;
 					}
 					m.decrementHops();
 					this.outboundPort.transmitMessage(m);
@@ -199,7 +200,7 @@ public class AccessPointNode extends TerminalNode
 		
 		try
 		{	
-			MessageI m = new Message(new NodeAddress("0.0.0.4"), "tata" , 4);
+			MessageI m = new Message(new NodeAddress("0.0.0.4"), "tata" , 10);
 			neighbours = this.routboundPort.registerAccessPoint(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ACCESSPOINTINBOUNDPORTURI);
 			if(neighbours.isEmpty()) {
 				this.logMessage("Pas de voisin a qui transferer le message");
@@ -207,10 +208,11 @@ public class AccessPointNode extends TerminalNode
 			}
 			for(ConnectionInfo ci : neighbours)
 			{
+				this.logMessage("3");
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 				if(this.hasRouteFor(m.getAddress()))
 				{
-					this.outboundPort.transmitMessage(m);
+					this.transmitMessage(m);
 					return;
 				}else
 				{

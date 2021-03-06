@@ -104,15 +104,16 @@ public class TerminalNode extends AbstractComponent
 
 				if(m.stillAlive())
 				{
-					if(this.outboundPort.hasRouteFor(m.getAddress()))
+					if(this.hasRouteFor(m.getAddress()))
 					{
 						m.decrementHops();
 						this.outboundPort.transmitMessage(m);
 						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+						return;
 					}
 					m.decrementHops();
 					this.outboundPort.transmitMessage(m);
-					this.logMessage("message "+ m.getContent() +" transmis au voisin par innondation");
+					this.logMessage("message "+ m.getContent() +" transmis par innondation");
 				}
 			}
 		}
@@ -153,33 +154,38 @@ public class TerminalNode extends AbstractComponent
 			
 			if(!(this instanceof RoutingNode) && !(this instanceof AccessPointNode))
 			{
-				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,2);
+				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,10);
 				neighbours= this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
 				if(neighbours.isEmpty()) {
 					this.logMessage("Pas de voisin a qui transferer le message");
-					//this.routboundPort.unregister(getAddr());
 					return;
 				}
 				for(ConnectionInfo ci : neighbours)
 				{
+					this.logMessage("1");
+					
 					this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 					if(this.hasRouteFor(m.getAddress()))
 					{
-						this.outboundPort.transmitMessage(m);
+						this.logMessage("5");
+						this.transmitMessage(m);
 						return;
 					}else
 					{
+						this.logMessage("4");
 						this.doPortDisconnection(this.outboundPort.getPortURI());
 					}
 				}
+				this.logMessage("6");
 				for(ConnectionInfo ci : neighbours)
 				{
+					this.logMessage("7");
 					if(ci.isRouting())
 					{
 						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-						if(this.outboundPort.hasRouteFor(m.getAddress()))
+						if(this.hasRouteFor(m.getAddress()))
 						{
-							this.outboundPort.transmitMessage(m);
+							this.transmitMessage(m);
 							return;
 						}else
 						{

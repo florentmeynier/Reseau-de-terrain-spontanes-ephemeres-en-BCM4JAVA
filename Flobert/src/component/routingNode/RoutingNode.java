@@ -101,15 +101,16 @@ public class RoutingNode extends TerminalNode
 
 				if(m.stillAlive())
 				{
-					if(this.outboundPort.hasRouteFor(m.getAddress()))
+					if(this.hasRouteFor(m.getAddress()))
 					{
 						m.decrementHops();
 						this.outboundPort.transmitMessage(m);
 						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+						return;
 					}
 					m.decrementHops();
 					this.outboundPort.transmitMessage(m);
-					this.logMessage("message "+ m.getContent() +" transmis au voisin");
+					this.logMessage("message "+ m.getContent() +" transmis au voisin par innondation");
 				}
 			}
 		}
@@ -175,25 +176,26 @@ public class RoutingNode extends TerminalNode
 		
 		try
 		{	
-			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" , 2);
-			neighbours =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
+			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" , 10);
+			this.neighbours =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
 			if(neighbours.isEmpty()) {
 				this.logMessage("Pas de voisin a qui transferer le message");
 				return;
 			}
-			for(ConnectionInfo ci : neighbours)
+			for(ConnectionInfo ci : this.neighbours)
 			{
+				this.logMessage("2");
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 				if(this.hasRouteFor(m.getAddress()))
 				{
-					this.outboundPort.transmitMessage(m);
+					this.transmitMessage(m);
 					return;
 				}else
 				{
 					this.doPortDisconnection(this.outboundPort.getPortURI());
 				}
 			}
-			int r = (new Random()).nextInt(neighbours.size());
+			int r = (new Random()).nextInt(this.neighbours.size());
 			ConnectionInfo ci = null;
 			while(ci == null)
 			{
