@@ -60,11 +60,16 @@ public class AccessPointNode extends TerminalNode
 		if(routingInboundPortURI == null)
 		{
 			super.connect(address, communicationInboundPortURI);
+			this.logMessage("4");
+
 		}else
 		{
 			this.doPortConnection(this.rtoutboundPort.getPortURI(), routingInboundPortURI, ConnectorRouting.class.getCanonicalName());
+			this.logMessage("9");
 			this.rtoutboundPort.updateRouting(this.getAddr(), this.routes);
 			this.rtoutboundPort.updateAccessPoint(this.getAddr(), 1);
+			this.logMessage("5");
+
 		}	
 	}
 	
@@ -101,7 +106,7 @@ public class AccessPointNode extends TerminalNode
 	{
 		for(RouteInfo ri : routes)
 		{
-			if(ri.getDestination().equals(neighbour) && ri.getNumberOfHops() < numberOfHops)
+			if(ri.getDestination().equals(neighbour) && ri.getNumberOfHops() > numberOfHops)
 			{
 				routes.remove(ri);
 				routes.add(new RouteInfo(neighbour, numberOfHops));
@@ -142,9 +147,19 @@ public class AccessPointNode extends TerminalNode
 		}
 		if(tmp != null)
 		{
-			
-			this.doPortDisconnection(this.outboundPort.getPortURI());
-			this.connect(tmp.getAddress(), tmp.getCommunicationInboundPortURI());	
+			if(this.rtoutboundPort.connected())
+			{
+				this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+			}
+			this.connectRouting(tmp.getAddress(), tmp.getCommunicationInboundPortURI(),tmp.getCommunicationInboundPortURI());
+			if(this.outboundPort.connected())
+			{
+				this.doPortDisconnection(this.outboundPort.getPortURI());
+
+			}else 
+			{
+				this.connect(tmp.getAddress(), tmp.getCommunicationInboundPortURI());
+			}
 			return true;
 		}
 		return false;
@@ -152,21 +167,21 @@ public class AccessPointNode extends TerminalNode
 	
 	public void transmitMessage(MessageI m) throws Exception
 	{
-		
 		if(m.getAddress().equals(this.getAddr()))
 		{
 			this.logMessage("message recu " + m.getContent());
 			return;
 		}else
 		{
-			if(this.inboundPort.connected())
+			if(this.apninboundPort.connected())
 			{
 				if (this.routes.contains(new RouteInfo(m.getAddress(),1)))
 				{
 					m.decrementHops();
-					this.inboundPort.transmitMessage(m);
+					this.apninboundPort.transmitMessage(m);
 				}
 			}
+			
 			if(this.outboundPort.connected())
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
@@ -208,7 +223,6 @@ public class AccessPointNode extends TerminalNode
 			}
 			for(ConnectionInfo ci : neighbours)
 			{
-				this.logMessage("3");
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 				if(this.hasRouteFor(m.getAddress()))
 				{
@@ -216,9 +230,16 @@ public class AccessPointNode extends TerminalNode
 					return;
 				}else
 				{
-					this.doPortDisconnection(this.outboundPort.getPortURI());
+					if(ci.isRouting())
+					{
+						this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+					}else
+					{
+						this.doPortDisconnection(this.outboundPort.getPortURI());
+					}
 				}
 			}
+			this.logMessage("4");
 			int r = (new Random()).nextInt(neighbours.size());
 			ConnectionInfo ci = null;
 			while(ci == null)
@@ -227,9 +248,10 @@ public class AccessPointNode extends TerminalNode
 				ci  = (ConnectionInfo) neighbours.toArray()[r];
 			}
 			
-			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+			this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 			
 			this.transmitMessage(m);
+			this.logMessage("6");
 			
 		}catch (Exception e)
 		{

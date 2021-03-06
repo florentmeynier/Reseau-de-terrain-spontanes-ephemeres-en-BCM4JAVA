@@ -149,8 +149,19 @@ public class RoutingNode extends TerminalNode
 		if(tmp != null)
 		{
 			
-			this.doPortDisconnection(this.outboundPort.getPortURI());
-			this.connect(tmp.getAddress(), tmp.getCommunicationInboundPortURI());	
+			if(this.rtoutboundPort.connected())
+			{
+				this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+			}
+			this.connectRouting(tmp.getAddress(), tmp.getCommunicationInboundPortURI(),tmp.getCommunicationInboundPortURI());
+			if(this.outboundPort.connected())
+			{
+				this.doPortDisconnection(this.outboundPort.getPortURI());
+
+			}else 
+			{
+				this.connect(tmp.getAddress(), tmp.getCommunicationInboundPortURI());
+			}
 			return true;
 		}
 		return false;
@@ -184,7 +195,6 @@ public class RoutingNode extends TerminalNode
 			}
 			for(ConnectionInfo ci : this.neighbours)
 			{
-				this.logMessage("2");
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 				if(this.hasRouteFor(m.getAddress()))
 				{
@@ -192,7 +202,13 @@ public class RoutingNode extends TerminalNode
 					return;
 				}else
 				{
-					this.doPortDisconnection(this.outboundPort.getPortURI());
+					if(ci.isRouting())
+					{
+						this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+					}else
+					{
+						this.doPortDisconnection(this.outboundPort.getPortURI());
+					}
 				}
 			}
 			int r = (new Random()).nextInt(this.neighbours.size());
@@ -202,7 +218,7 @@ public class RoutingNode extends TerminalNode
 				r = (new Random()).nextInt(neighbours.size());
 				ci  = (ConnectionInfo) neighbours.toArray()[r];
 			}
-			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+			this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 	
 
 			this.transmitMessage(m);			

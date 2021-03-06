@@ -162,24 +162,19 @@ public class TerminalNode extends AbstractComponent
 				}
 				for(ConnectionInfo ci : neighbours)
 				{
-					this.logMessage("1");
 					
 					this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 					if(this.hasRouteFor(m.getAddress()))
 					{
-						this.logMessage("5");
 						this.transmitMessage(m);
 						return;
 					}else
 					{
-						this.logMessage("4");
 						this.doPortDisconnection(this.outboundPort.getPortURI());
 					}
 				}
-				this.logMessage("6");
 				for(ConnectionInfo ci : neighbours)
 				{
-					this.logMessage("7");
 					if(ci.isRouting())
 					{
 						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
