@@ -85,7 +85,6 @@ public class RoutingNode extends TerminalNode
 			}
 		}
 		this.routes.add(new RouteInfo(neighbour,1));
-		
 	}
 	
 	public void transmitMessage(MessageI m) throws Exception
