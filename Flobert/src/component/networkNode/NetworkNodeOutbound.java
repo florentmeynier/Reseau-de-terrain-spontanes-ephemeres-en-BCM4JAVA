@@ -23,14 +23,6 @@ public class NetworkNodeOutbound extends AbstractOutboundPort implements Network
 	{
 		super(uri, NetworkNodeCI.class, owner);
 	}
-	
-	@Override
-	public void connect(NetworkAddressI address, String networkNodeInboundPortURI) throws Exception 
-	{
-		// TODO Auto-generated method stub
-		((NetworkNodeCI) this.getConnector()).connect(address, networkNodeInboundPortURI);
-
-	}
 
 	@Override
 	public void transmitMessage(MessageI m) throws Exception 
@@ -39,6 +31,12 @@ public class NetworkNodeOutbound extends AbstractOutboundPort implements Network
 		((NetworkNodeCI) this.getConnector()).transmitMessage(m);
 
 
+	}
+
+	@Override
+	public void transmitAddress(NetworkAddressI addr) throws Exception {
+		// TODO Auto-generated method stub
+		((NetworkNodeCI) this.getConnector()).transmitAddress(addr);
 	}
 
 }

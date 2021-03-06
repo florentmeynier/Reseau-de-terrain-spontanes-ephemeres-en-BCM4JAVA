@@ -26,19 +26,18 @@ public class NetworkNodeInbound extends AbstractInboundPort implements NetworkNo
 	}
 
 	@Override
-	public void connect(NetworkAddressI address, String networkNodeInboundPortURI) throws Exception 
-	{
-		// TODO Auto-generated method stub
-		this.getOwner().handleRequest(c -> {((NetworkNode) c).connect(address, networkNodeInboundPortURI); return null;});
-
-	}
-
-	@Override
 	public void transmitMessage(MessageI m) throws Exception 
 	{
 		// TODO Auto-generated method stub
 		this.getOwner().handleRequest(c -> {((NetworkNode) c).transmitMessage(m); return null;});
 
+	}
+
+	@Override
+	public void transmitAddress(NetworkAddressI addr) throws Exception 
+	{
+		// TODO Auto-generated method stub
+		this.getOwner().handleRequest(c -> {((NetworkNode) c).transmitAddress(addr); return null;});
 	}
 
 }

@@ -44,19 +44,8 @@ public class Registration extends AbstractComponent
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String connectionInboundURI, PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception
 	{
 		ConnectionInfo ci = new ConnectionInfo(address, connectionInboundURI, routingInboundPortURI, initialPosition, initialRange);
-		/*Set<ConnectionInfo> res = new HashSet<>();
 		
-		for(ConnectionInfo c : tables)
-		{
-			if(ci.getPos().distance(c.getPos()) > -1 && ci.getPos().distance(c.getPos()) <= ci.getPortee())
-			{
-				if(c.isRouting())
-				{
-					res.add(c);
-				}
-			}
-		}*/
-			return getInPortee(ci);
+		return getInPortee(ci);
 	}
 	
 	public synchronized void unregister(NodeAddressI address) throws Exception

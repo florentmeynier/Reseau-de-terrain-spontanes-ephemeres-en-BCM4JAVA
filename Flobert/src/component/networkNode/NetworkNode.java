@@ -2,7 +2,9 @@ package component.networkNode;
 
 
 import component.networkNode.interfaces.NetworkNodeCI;
+import component.registration.NetworkAddress;
 import component.registration.interfaces.NetworkAddressI;
+import component.terminalNode.Message;
 import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -35,15 +37,8 @@ public class NetworkNode extends AbstractComponent
 		this.outboundPort.publishPort();
 		this.toggleLogging();
 		this.toggleTracing();
+		cpt++;
 		
-	}
-
-
-	public void connect(NetworkAddressI address, String networkNodeInboundPortURI) throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-		this.doPortConnection(this.outboundPort.getPortURI(), networkNodeInboundPortURI, ConnectorNetworkNode.class.getCanonicalName());
 	}
 
 
@@ -64,9 +59,17 @@ public class NetworkNode extends AbstractComponent
 				{
 					m.decrementHops();
 					this.outboundPort.transmitMessage(m);
-					this.logMessage("message "+ m.getContent() +" transmis au voisin");
+					this.logMessage("message "+ m.getContent() +" transmis à l'accessPoint");
 				}
 			}
+		}
+	}
+	
+	public void transmitAddress (NetworkAddressI addr) throws Exception
+	{
+		if(this.outboundPort.connected())
+		{
+			this.outboundPort.transmitAddress(addr);
 		}
 	}
 	
@@ -74,9 +77,22 @@ public class NetworkNode extends AbstractComponent
 	public synchronized void execute() throws Exception
 	{
 		super.execute();
-		
-		
-		
+		try
+		{
+			transmitAddress(this.addr);
+			MessageI m = new Message(new NetworkAddress("1.0.0.4"), "coucou" , 4);
+			if(this.outboundPort.connected())
+			{
+				transmitMessage(m);
+			}else
+			{
+				this.logMessage("pas d'accessPoint à qui relayer le message " + m.getContent());
+			}
+
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 	}
 	@Override

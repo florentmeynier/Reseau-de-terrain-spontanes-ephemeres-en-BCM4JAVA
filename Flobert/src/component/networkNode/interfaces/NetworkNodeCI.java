@@ -7,7 +7,7 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
 
 public interface NetworkNodeCI extends OfferedCI, RequiredCI
 {
-	public void connect(NetworkAddressI address, String networkNodeInboundPortURI) throws Exception;
+	public void transmitAddress(NetworkAddressI addr) throws Exception;
 	public void transmitMessage(MessageI m) throws Exception;
 
 }

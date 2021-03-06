@@ -28,24 +28,25 @@ public class RegistrationInbound extends AbstractInboundPort implements Registra
 	@Override
 	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String connectionInboundURI,
 			PositionI initialPosition, double initialRange) throws Exception {
-		return ((Registration) this.getOwner()).registerTerminalNode(address, connectionInboundURI, initialPosition, initialRange);
+		return this.getOwner().handleRequest(c -> {return ((Registration)c).registerTerminalNode(address,connectionInboundURI,initialPosition,initialRange);});
 	}
 
 	@Override
 	public Set<ConnectionInfo> registerAccessPoint(NodeAddressI address, String connectionInboundURI,
 			PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception {
-		return ((Registration) this.getOwner()).registerAccessPoint(address, connectionInboundURI, initialPosition, initialRange, routingInboundPortURI);
+		return this.getOwner().handleRequest(c -> {return ((Registration)c).registerAccessPoint(address,connectionInboundURI,initialPosition,initialRange,routingInboundPortURI);});
 	}
 
 	@Override
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String connectionInboundURI,
 			PositionI initialPosition, double initialRange, String routingInboundPortURI) throws Exception {
-		return ((Registration) this.getOwner()).registerRoutingNode(address, connectionInboundURI, initialPosition, initialRange, routingInboundPortURI);
+		return this.getOwner().handleRequest(c -> {return ((Registration)c).registerRoutingNode(address,connectionInboundURI,initialPosition,initialRange,routingInboundPortURI);});
 	}
 
 	@Override
-	public void unregister(NodeAddressI address) throws Exception {
-		((Registration) this.getOwner()).unregister(address);
+	public void unregister(NodeAddressI address) throws Exception 
+	{
+		this.getOwner().handleRequest(c -> {((Registration) c).unregister(address); return null;});
 	}
 
 }

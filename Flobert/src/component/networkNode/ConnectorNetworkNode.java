@@ -8,14 +8,6 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 public class ConnectorNetworkNode extends AbstractConnector implements NetworkNodeCI
 {
 
-	@Override
-	public void connect(NetworkAddressI address, String networkNodeInboundPortURI) throws Exception 
-	{
-		// TODO Auto-generated method stub
-		((NetworkNodeCI) this.offering).connect(address, networkNodeInboundPortURI);
-
-		
-	}
 
 	@Override
 	public void transmitMessage(MessageI m) throws Exception 
@@ -24,6 +16,13 @@ public class ConnectorNetworkNode extends AbstractConnector implements NetworkNo
 		((NetworkNodeCI) this.offering).transmitMessage(m);
 
 		
+	}
+
+	@Override
+	public void transmitAddress(NetworkAddressI addr) throws Exception 
+	{
+		// TODO Auto-generated method stub
+		((NetworkNodeCI) this.offering).transmitAddress(addr);
 	}
 
 }

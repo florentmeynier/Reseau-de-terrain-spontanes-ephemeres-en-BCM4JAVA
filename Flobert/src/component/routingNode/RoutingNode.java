@@ -158,7 +158,15 @@ public class RoutingNode extends TerminalNode
 	
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{
-		return;
+		for(RouteInfo ri : routes)
+		{
+			if(ri.getDestination().equals(neighbour) && ri.getNumberOfHops() < numberOfHops)
+			{
+				routes.remove(ri);
+				routes.add(new RouteInfo(neighbour, numberOfHops));
+			}
+				
+		}
 	}
 	
 	@Override
@@ -176,7 +184,7 @@ public class RoutingNode extends TerminalNode
 			}
 			for(ConnectionInfo ci : neighbours)
 			{
-				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 				if(this.hasRouteFor(m.getAddress()))
 				{
 					this.outboundPort.transmitMessage(m);
