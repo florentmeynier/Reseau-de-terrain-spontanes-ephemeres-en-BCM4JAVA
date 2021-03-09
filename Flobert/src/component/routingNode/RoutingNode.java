@@ -53,7 +53,16 @@ public class RoutingNode extends TerminalNode
 			super.connect(address, communicationInboundPortURI);
 		}else
 		{
+			if(this.rtoutboundPort.connected())
+			{
+				this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+			}
 			this.doPortConnection(this.rtoutboundPort.getPortURI(), routingInboundPortURI, ConnectorRouting.class.getCanonicalName());
+			if(this.outboundPort.connected())
+			{
+				this.doPortDisconnection(this.outboundPort.getPortURI());
+			}
+			super.connect(address, communicationInboundPortURI);
 			this.rtoutboundPort.updateRouting(this.getAddr(), this.routes);
 		}
 		
@@ -95,22 +104,38 @@ public class RoutingNode extends TerminalNode
 			return;
 		}else
 		{
-			if(this.outboundPort.connected())
+			if(this.hasRouteFor(m.getAddress()))
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
 
 				if(m.stillAlive())
 				{
-					if(this.hasRouteFor(m.getAddress()))
-					{
-						m.decrementHops();
-						this.outboundPort.transmitMessage(m);
-						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
-						return;
-					}
 					m.decrementHops();
 					this.outboundPort.transmitMessage(m);
-					this.logMessage("message "+ m.getContent() +" transmis au voisin par innondation");
+					this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+					
+				}else
+				{
+					this.logMessage("message "+ m.getContent() +" est mort");
+				}
+			}else
+			{
+				if(this.neighbours.isEmpty())
+				{
+					this.logMessage("Pas de voisin a qui transferer le message");
+				}else
+				{
+					int r = 0;
+					ConnectionInfo ci = null;
+					while(ci == null)
+					{
+						r = (new Random()).nextInt(neighbours.size());
+						ci  = (ConnectionInfo) neighbours.toArray()[r];
+					}
+					this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+					m.decrementHops();
+					this.outboundPort.transmitMessage(m);
+					this.logMessage("message "+ m.getContent() +" transmis par innondation");
 				}
 			}
 		}
@@ -128,8 +153,7 @@ public class RoutingNode extends TerminalNode
 				{
 					if(ci.getAddress().equals(ri.getDestination()))
 					{
-						this.doPortDisconnection(this.outboundPort.getPortURI());
-						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 						return true;
 					}else
 					{
@@ -148,20 +172,7 @@ public class RoutingNode extends TerminalNode
 		}
 		if(tmp != null)
 		{
-			
-			if(this.rtoutboundPort.connected())
-			{
-				this.doPortDisconnection(this.rtoutboundPort.getPortURI());
-			}
-			this.connectRouting(tmp.getAddress(), tmp.getCommunicationInboundPortURI(),tmp.getCommunicationInboundPortURI());
-			if(this.outboundPort.connected())
-			{
-				this.doPortDisconnection(this.outboundPort.getPortURI());
-
-			}else 
-			{
-				this.connect(tmp.getAddress(), tmp.getCommunicationInboundPortURI());
-			}
+			this.connectRouting(tmp.getAddress(), tmp.getCommunicationInboundPortURI(), tmp.getRoutingInboundURI());
 			return true;
 		}
 		return false;
@@ -193,36 +204,16 @@ public class RoutingNode extends TerminalNode
 				this.logMessage("Pas de voisin a qui transferer le message");
 				return;
 			}
-			for(ConnectionInfo ci : this.neighbours)
+			for(ConnectionInfo ci : neighbours)
 			{
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-				if(this.hasRouteFor(m.getAddress()))
+				this.doPortDisconnection(this.outboundPort.getPortURI());
+				if(this.rtoutboundPort.connected())
 				{
-					this.transmitMessage(m);
-					return;
-				}else
-				{
-					if(ci.isRouting())
-					{
-						this.doPortDisconnection(this.rtoutboundPort.getPortURI());
-					}else
-					{
-						this.doPortDisconnection(this.outboundPort.getPortURI());
-					}
+					this.doPortDisconnection(this.rtoutboundPort.getPortURI());
 				}
 			}
-			int r = (new Random()).nextInt(this.neighbours.size());
-			ConnectionInfo ci = null;
-			while(ci == null)
-			{
-				r = (new Random()).nextInt(neighbours.size());
-				ci  = (ConnectionInfo) neighbours.toArray()[r];
-			}
-			this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-	
-
-			this.transmitMessage(m);			
-
+			this.transmitMessage(m);
 
 		}catch (Exception e)
 		{

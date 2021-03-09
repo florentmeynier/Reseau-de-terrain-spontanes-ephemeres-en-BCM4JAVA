@@ -98,19 +98,35 @@ public class TerminalNode extends AbstractComponent
 			return;
 		}else
 		{
-			if(this.outboundPort.connected())
+			if(this.hasRouteFor(m.getAddress()))
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
 
 				if(m.stillAlive())
 				{
-					if(this.hasRouteFor(m.getAddress()))
+					m.decrementHops();
+					this.outboundPort.transmitMessage(m);
+					this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+					
+				}else
+				{
+					this.logMessage("message "+ m.getContent() +" est mort");
+				}
+			}else
+			{
+				if(this.neighbours.isEmpty())
+				{
+					this.logMessage("Pas de voisin a qui transferer le message");
+				}else
+				{
+					int r = 0;
+					ConnectionInfo ci = null;
+					while(ci == null)
 					{
-						m.decrementHops();
-						this.outboundPort.transmitMessage(m);
-						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
-						return;
+						r = (new Random()).nextInt(neighbours.size());
+						ci  = (ConnectionInfo) neighbours.toArray()[r];
 					}
+					this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 					m.decrementHops();
 					this.outboundPort.transmitMessage(m);
 					this.logMessage("message "+ m.getContent() +" transmis par innondation");
@@ -129,7 +145,6 @@ public class TerminalNode extends AbstractComponent
 				{
 					if(ci.getAddress().equals(ri.getDestination()))
 					{
-						this.doPortDisconnection(this.outboundPort.getPortURI());
 						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 						return true;
 					}
@@ -164,40 +179,9 @@ public class TerminalNode extends AbstractComponent
 				{
 					
 					this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-					if(this.hasRouteFor(m.getAddress()))
-					{
-						this.transmitMessage(m);
-						return;
-					}else
-					{
-						this.doPortDisconnection(this.outboundPort.getPortURI());
-					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					
 				}
-				for(ConnectionInfo ci : neighbours)
-				{
-					if(ci.isRouting())
-					{
-						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-						if(this.hasRouteFor(m.getAddress()))
-						{
-							this.transmitMessage(m);
-							return;
-						}else
-						{
-							this.doPortDisconnection(this.outboundPort.getPortURI());
-						}
-					}
-				}
-				
-				int r = (new Random()).nextInt(neighbours.size());
-				ConnectionInfo ci = null;
-				while(ci == null)
-				{
-					r = (new Random()).nextInt(neighbours.size());
-					ci  = (ConnectionInfo) neighbours.toArray()[r];
-				}
-				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-				
 				this.transmitMessage(m);
 
 			}

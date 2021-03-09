@@ -83,7 +83,7 @@ public class NetworkNode extends AbstractComponent
 			MessageI m = new Message(new NetworkAddress("1.0.0.4"), "coucou" , 10);
 			if(this.outboundPort.connected())
 			{
-				transmitMessage(m);
+				this.transmitMessage(m);
 			}else
 			{
 				this.logMessage("pas d'accessPoint à qui relayer le message " + m.getContent());
@@ -115,7 +115,7 @@ public class NetworkNode extends AbstractComponent
 			this.doPortDisconnection(this.outboundPort.getPortURI());
 		}		
 		super.finalise();
-		
+
 	}
 	
 }
