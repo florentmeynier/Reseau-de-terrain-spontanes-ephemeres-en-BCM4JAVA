@@ -1,26 +1,24 @@
 package component.networkNode;
 
 
+import component.accessPointNode.AccessPointNode;
 import component.networkNode.interfaces.NetworkNodeCI;
 import component.registration.NetworkAddress;
 import component.registration.interfaces.NetworkAddressI;
 import component.terminalNode.Message;
 import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.AbstractComponent;
-import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 
-@OfferedInterfaces(offered = {NetworkNodeCI.class})
+
 @RequiredInterfaces(required = {NetworkNodeCI.class})
 public class NetworkNode extends AbstractComponent 
 {
-	protected NetworkNodeInbound inboundPort;
 	protected NetworkNodeOutbound outboundPort;
-	public static final String SAMPLESNETWORKNODEINBOUNDPORTURI = "nnip-uri";
 	public static final String SAMPLESNETWORKNODEOUTBOUNDPORTURI = "nnop-uri";
 	public static int cpt = 0;
-	protected final String NETWORKNODEINBOUNDPORTURI;
 	private final String NETWORKNODEOUTBOUNDPORTURI;
 	private NetworkAddressI addr;
 	
@@ -29,11 +27,8 @@ public class NetworkNode extends AbstractComponent
 	{
 		super(1,0);
 		this.addr = addr;
-		this.NETWORKNODEINBOUNDPORTURI = SAMPLESNETWORKNODEINBOUNDPORTURI + cpt;
 		this.NETWORKNODEOUTBOUNDPORTURI = SAMPLESNETWORKNODEOUTBOUNDPORTURI + cpt;
-		this.inboundPort = new NetworkNodeInbound(this.NETWORKNODEINBOUNDPORTURI,this);
 		this.outboundPort = new NetworkNodeOutbound(this.NETWORKNODEOUTBOUNDPORTURI,this);
-		this.inboundPort.publishPort();
 		this.outboundPort.publishPort();
 		this.toggleLogging();
 		this.toggleTracing();
@@ -54,11 +49,14 @@ public class NetworkNode extends AbstractComponent
 			if(this.outboundPort.connected())
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
+				this.logMessage("1");
 
 				if(m.stillAlive())
 				{
 					m.decrementHops();
+					this.logMessage("11");
 					this.outboundPort.transmitMessage(m);
+					this.logMessage("12");
 					this.logMessage("message "+ m.getContent() +" transmis à l'accessPoint");
 				}
 			}
@@ -69,8 +67,24 @@ public class NetworkNode extends AbstractComponent
 	{
 		if(this.outboundPort.connected())
 		{
+			this.logMessage("93");
+			this.logMessage(this.outboundPort.getServerPortURI());
 			this.outboundPort.transmitAddress(addr);
 		}
+	}
+	
+	@Override
+	public synchronized void start() throws ComponentStartException
+	{	
+		try
+		{
+			this.doPortConnection(this.outboundPort.getPortURI(), AccessPointNode.SAMPLESACCESSPOINTNETWORKINBOUNDPORTURI+(cpt-1), ConnectorNetworkNode.class.getCanonicalName());
+			
+		}catch (Exception e)
+		{
+			throw new ComponentStartException(e);
+		}
+		super.start();
 	}
 	
 	@Override
@@ -79,10 +93,12 @@ public class NetworkNode extends AbstractComponent
 		super.execute();
 		try
 		{
-			transmitAddress(this.addr);
 			MessageI m = new Message(new NetworkAddress("1.0.0.4"), "coucou" , 10);
 			if(this.outboundPort.connected())
 			{
+				this.logMessage("73");
+				transmitAddress(this.addr);
+				this.logMessage("83");
 				this.transmitMessage(m);
 			}else
 			{
@@ -99,7 +115,6 @@ public class NetworkNode extends AbstractComponent
 	public synchronized void shutdown() throws ComponentShutdownException
 	{
 		try {
-			this.inboundPort.unpublishPort();
 			this.outboundPort.unpublishPort();
 		}  catch (Exception e) {
 			throw new ComponentShutdownException(e);

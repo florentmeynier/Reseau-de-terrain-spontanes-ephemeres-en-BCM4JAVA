@@ -17,6 +17,7 @@ import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 
 @OfferedInterfaces(offered = {CommunicationCI.class,RoutingCI.class})
 @RequiredInterfaces(required = {RegistrationCI.class, CommunicationCI.class, RoutingCI.class})
@@ -107,11 +108,14 @@ public class RoutingNode extends TerminalNode
 			if(this.hasRouteFor(m.getAddress()))
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
+				this.logMessage("3");
 
 				if(m.stillAlive())
 				{
 					m.decrementHops();
+					this.logMessage("9");
 					this.outboundPort.transmitMessage(m);
+					this.logMessage("10");
 					this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
 					
 				}else
@@ -132,10 +136,14 @@ public class RoutingNode extends TerminalNode
 						r = (new Random()).nextInt(neighbours.size());
 						ci  = (ConnectionInfo) neighbours.toArray()[r];
 					}
-					this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-					m.decrementHops();
-					this.outboundPort.transmitMessage(m);
-					this.logMessage("message "+ m.getContent() +" transmis par innondation");
+					if(m.stillAlive())
+					{
+						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(), ci.getRoutingInboundURI());
+						m.decrementHops();
+						this.logMessage("35");
+						this.outboundPort.transmitMessage(m);
+						this.logMessage("message "+ m.getContent() +" transmis par innondation");
+					}
 				}
 			}
 		}
@@ -145,6 +153,18 @@ public class RoutingNode extends TerminalNode
 	{
 		int minHops = Integer.MAX_VALUE;
 		ConnectionInfo tmp = null;
+		
+		neighbours = this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
+		for(ConnectionInfo ci : neighbours)
+		{
+			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+			this.doPortDisconnection(this.outboundPort.getPortURI());
+			if(this.rtoutboundPort.connected())
+			{
+				this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+			}
+		}
+		
 		for(RouteInfo ri : routes)
 		{
 			if(ri.getDestination().equals(address))
@@ -192,6 +212,13 @@ public class RoutingNode extends TerminalNode
 	}
 	
 	@Override
+	public synchronized void start() throws ComponentStartException
+	{
+		super.start();
+		
+	}
+	
+	@Override
 	public synchronized void execute() throws Exception
 	{	
 		super.execute();
@@ -199,20 +226,8 @@ public class RoutingNode extends TerminalNode
 		try
 		{	
 			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" , 10);
-			this.neighbours =  this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
-			if(neighbours.isEmpty()) {
-				this.logMessage("Pas de voisin a qui transferer le message");
-				return;
-			}
-			for(ConnectionInfo ci : neighbours)
-			{
-				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-				this.doPortDisconnection(this.outboundPort.getPortURI());
-				if(this.rtoutboundPort.connected())
-				{
-					this.doPortDisconnection(this.rtoutboundPort.getPortURI());
-				}
-			}
+			neighbours = this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
+			this.logMessage("43");
 			this.transmitMessage(m);
 
 		}catch (Exception e)
