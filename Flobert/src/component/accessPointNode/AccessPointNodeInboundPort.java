@@ -25,6 +25,7 @@ public class AccessPointNodeInboundPort extends AbstractInboundPort implements R
 	public AccessPointNodeInboundPort(String uri, ComponentI owner) throws Exception
 	{
 		super(uri, RoutingCI.class, owner);
+		assert(owner instanceof AccessPointNode);
 		
 	}
 

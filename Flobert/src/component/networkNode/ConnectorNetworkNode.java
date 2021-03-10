@@ -22,9 +22,7 @@ public class ConnectorNetworkNode extends AbstractConnector implements NetworkNo
 	public void transmitAddress(NetworkAddressI addr) throws Exception 
 	{
 		// TODO Auto-generated method stub
-		System.out.println("123");
 		((NetworkNodeCI) this.offering).transmitAddress(addr);
-		System.out.println("133");
 	}
 
 }

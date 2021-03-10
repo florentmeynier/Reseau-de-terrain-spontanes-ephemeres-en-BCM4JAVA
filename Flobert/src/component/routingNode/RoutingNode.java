@@ -108,14 +108,11 @@ public class RoutingNode extends TerminalNode
 			if(this.hasRouteFor(m.getAddress()))
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
-				this.logMessage("3");
 
 				if(m.stillAlive())
 				{
 					m.decrementHops();
-					this.logMessage("9");
 					this.outboundPort.transmitMessage(m);
-					this.logMessage("10");
 					this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
 					
 				}else
@@ -140,9 +137,11 @@ public class RoutingNode extends TerminalNode
 					{
 						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(), ci.getRoutingInboundURI());
 						m.decrementHops();
-						this.logMessage("35");
 						this.outboundPort.transmitMessage(m);
 						this.logMessage("message "+ m.getContent() +" transmis par innondation");
+					}else
+					{
+						this.logMessage("message "+ m.getContent() +" est mort");
 					}
 				}
 			}
@@ -153,17 +152,6 @@ public class RoutingNode extends TerminalNode
 	{
 		int minHops = Integer.MAX_VALUE;
 		ConnectionInfo tmp = null;
-		
-		neighbours = this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
-		for(ConnectionInfo ci : neighbours)
-		{
-			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-			this.doPortDisconnection(this.outboundPort.getPortURI());
-			if(this.rtoutboundPort.connected())
-			{
-				this.doPortDisconnection(this.rtoutboundPort.getPortURI());
-			}
-		}
 		
 		for(RouteInfo ri : routes)
 		{
@@ -227,7 +215,16 @@ public class RoutingNode extends TerminalNode
 		{	
 			MessageI m = new Message(new NodeAddress("0.0.0.6"), "toto" , 10);
 			neighbours = this.routboundPort.registerRoutingNode(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ROUTINGINBOUNDPORTURI);
-			this.logMessage("43");
+
+			for(ConnectionInfo ci : neighbours)
+			{
+				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+				this.doPortDisconnection(this.outboundPort.getPortURI());
+				if(this.rtoutboundPort.connected())
+				{
+					this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+				}
+			}
 			this.transmitMessage(m);
 
 		}catch (Exception e)

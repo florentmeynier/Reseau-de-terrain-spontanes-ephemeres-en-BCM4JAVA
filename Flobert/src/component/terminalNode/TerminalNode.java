@@ -83,6 +83,10 @@ public class TerminalNode extends AbstractComponent
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
 		routes.add(new RouteInfo(address,1));
+		if(this.outboundPort.connected())
+		{
+			this.doPortDisconnection(this.outboundPort.getPortURI());
+		}
 		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, ConnectorTerminalNode.class.getCanonicalName());
 	}
 	
@@ -103,12 +107,10 @@ public class TerminalNode extends AbstractComponent
 			if(this.hasRouteFor(m.getAddress()))
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
-				this.logMessage("4");
 
 				if(m.stillAlive())
 				{
 					m.decrementHops();
-					this.logMessage("22");
 					this.outboundPort.transmitMessage(m);
 					this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
 					
@@ -134,9 +136,11 @@ public class TerminalNode extends AbstractComponent
 					{
 						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 						m.decrementHops();
-						this.logMessage("34");
 						this.outboundPort.transmitMessage(m);
 						this.logMessage("message "+ m.getContent() +" transmis par innondation");
+					}else
+					{
+						this.logMessage("message "+ m.getContent() +" est mort");
 					}
 				}
 			}
@@ -145,14 +149,6 @@ public class TerminalNode extends AbstractComponent
 	
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
-		neighbours = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
-		for(ConnectionInfo ci : neighbours)
-		{
-			
-			this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-			this.doPortDisconnection(this.outboundPort.getPortURI());
-			
-		}
 		for(RouteInfo ri : routes)
 		{
 			if(ri.getDestination().equals(address))
@@ -203,8 +199,14 @@ public class TerminalNode extends AbstractComponent
 			if(!(this instanceof RoutingNode) && !(this instanceof AccessPointNode))
 			{
 				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,10);
-				neighbours= this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
-				this.logMessage("53");
+				neighbours = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
+				for(ConnectionInfo ci : neighbours)
+				{
+					
+					this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					
+				}
 				this.transmitMessage(m);
 
 			}

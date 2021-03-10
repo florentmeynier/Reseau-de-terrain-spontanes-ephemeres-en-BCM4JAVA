@@ -21,6 +21,7 @@ public class NetworkNode extends AbstractComponent
 	public static int cpt = 0;
 	private final String NETWORKNODEOUTBOUNDPORTURI;
 	private NetworkAddressI addr;
+	public static int cpt2 = 0;
 	
 
 	protected NetworkNode(NetworkAddressI addr) throws Exception 
@@ -49,14 +50,11 @@ public class NetworkNode extends AbstractComponent
 			if(this.outboundPort.connected())
 			{
 				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
-				this.logMessage("1");
 
 				if(m.stillAlive())
 				{
 					m.decrementHops();
-					this.logMessage("11");
 					this.outboundPort.transmitMessage(m);
-					this.logMessage("12");
 					this.logMessage("message "+ m.getContent() +" transmis à l'accessPoint");
 				}
 			}
@@ -67,8 +65,6 @@ public class NetworkNode extends AbstractComponent
 	{
 		if(this.outboundPort.connected())
 		{
-			this.logMessage("93");
-			this.logMessage(this.outboundPort.getServerPortURI());
 			this.outboundPort.transmitAddress(addr);
 		}
 	}
@@ -78,8 +74,8 @@ public class NetworkNode extends AbstractComponent
 	{	
 		try
 		{
-			this.doPortConnection(this.outboundPort.getPortURI(), AccessPointNode.SAMPLESACCESSPOINTNETWORKINBOUNDPORTURI+(cpt-1), ConnectorNetworkNode.class.getCanonicalName());
-			
+			this.doPortConnection(this.outboundPort.getPortURI(), AccessPointNode.SAMPLESACCESSPOINTNETWORKINBOUNDPORTURI+cpt2, ConnectorNetworkNode.class.getCanonicalName());
+			cpt2++;
 		}catch (Exception e)
 		{
 			throw new ComponentStartException(e);
@@ -96,9 +92,7 @@ public class NetworkNode extends AbstractComponent
 			MessageI m = new Message(new NetworkAddress("1.0.0.4"), "coucou" , 10);
 			if(this.outboundPort.connected())
 			{
-				this.logMessage("73");
-				transmitAddress(this.addr);
-				this.logMessage("83");
+				this.transmitAddress(this.addr);
 				this.transmitMessage(m);
 			}else
 			{

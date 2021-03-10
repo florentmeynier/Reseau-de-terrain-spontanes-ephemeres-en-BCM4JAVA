@@ -36,9 +36,7 @@ public class NetworkNodeOutbound extends AbstractOutboundPort implements Network
 	@Override
 	public void transmitAddress(NetworkAddressI addr) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("153");
 		((NetworkNodeCI) this.getConnector()).transmitAddress(addr);
-		System.out.println("143");
 	}
 
 }

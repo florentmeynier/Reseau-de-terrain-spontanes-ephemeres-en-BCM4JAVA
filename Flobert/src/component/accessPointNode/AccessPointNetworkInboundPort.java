@@ -23,6 +23,7 @@ public class AccessPointNetworkInboundPort extends AbstractInboundPort implement
 	public AccessPointNetworkInboundPort(String uri, ComponentI owner) throws Exception
 	{
 		super(uri, NetworkNodeCI.class, owner);
+		assert(owner instanceof AccessPointNode);
 		
 	}
 
@@ -38,7 +39,7 @@ public class AccessPointNetworkInboundPort extends AbstractInboundPort implement
 	public void transmitAddress(NetworkAddressI addr) throws Exception
 	{
 		// TODO Auto-generated method stub
-		this.getOwner().handleRequest(c -> {System.out.println("883");((AccessPointNode) c).transmitAddress(addr); return null;});
+		this.getOwner().handleRequest(c -> {((AccessPointNode) c).transmitAddress(addr); return null;});
 
 	}
 

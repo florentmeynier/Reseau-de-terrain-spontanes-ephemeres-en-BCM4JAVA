@@ -130,20 +130,9 @@ public class AccessPointNode extends TerminalNode
 		int minHops = Integer.MAX_VALUE;
 		ConnectionInfo tmp = null;
 		
-		neighbours = this.routboundPort.registerAccessPoint(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ACCESSPOINTINBOUNDPORTURI);
-
-		for(ConnectionInfo ci : neighbours)
-		{
-			this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-			this.doPortDisconnection(this.outboundPort.getPortURI());
-			if(this.rtoutboundPort.connected())
-			{
-				this.doPortDisconnection(this.rtoutboundPort.getPortURI());
-			}
-		}
 		for(RouteInfo ri : routes)
 		{
-			if(address.isNodeAddress() && ri.getDestination().equals(address))
+			if(ri.getDestination().equals(address))
 			{
 				for(ConnectionInfo ci : neighbours)
 				{
@@ -182,59 +171,60 @@ public class AccessPointNode extends TerminalNode
 			return;
 		}else
 		{
-			if(this.apninboundPort.connected())
+			if(this.apninboundPort.connected() && m.getAddress().isNetworkAddress())
 			{
 				for(RouteInfo ri : routes)
 				{
-					if(m.getAddress().isNetworkAddress() && ri.getDestination().equals(m.getAddress()) && ri.getNumberOfHops() == 1)
+					if(ri.getDestination().equals(m.getAddress()) && ri.getNumberOfHops() == 1)
 					{
 						m.decrementHops();
-						this.logMessage("19");
 						this.apninboundPort.transmitMessage(m);
 						this.logMessage("message " + m.getContent() +" transmis au noeud du reseau");
-						return;
 					}
 				}
 				
-			}
-			
-			if(this.hasRouteFor(m.getAddress()))
-			{
-				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
-
-				this.logMessage("2");
-
-				if(m.stillAlive())
-				{
-					m.decrementHops();
-					this.outboundPort.transmitMessage(m);
-					this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
-					
-				}else
-				{
-					this.logMessage("message "+ m.getContent() +" est mort");
-				}
 			}else
 			{
-				if(this.neighbours.isEmpty())
+				if(this.hasRouteFor(m.getAddress()))
 				{
-					this.logMessage("Pas de voisin a qui transferer le message");
-				}else
-				{
-					int r = 0;
-					ConnectionInfo ci = null;
-					while(ci == null)
-					{
-						r = (new Random()).nextInt(neighbours.size());
-						ci  = (ConnectionInfo) neighbours.toArray()[r];
-					}
+					this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
+
+
 					if(m.stillAlive())
 					{
-						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 						m.decrementHops();
-						this.logMessage("33");
 						this.outboundPort.transmitMessage(m);
-						this.logMessage("message "+ m.getContent() +" transmis par innondation");
+						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+
+					}else
+					{
+						this.logMessage("message "+ m.getContent() +" est mort");
+					}
+				}else
+				{
+					if(this.neighbours.isEmpty())
+					{
+						this.logMessage("Pas de voisin a qui transferer le message");
+					}else
+					{
+						int r = 0;
+						ConnectionInfo ci = null;
+						while(ci == null)
+						{
+							r = (new Random()).nextInt(neighbours.size());
+							ci  = (ConnectionInfo) neighbours.toArray()[r];
+						}
+						if(m.stillAlive())
+						{
+							if(this.outboundPort.connected())
+							{
+								this.doPortDisconnection(this.outboundPort.getPortURI());
+							}
+							this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+							m.decrementHops();
+							this.outboundPort.transmitMessage(m);
+							this.logMessage("message "+ m.getContent() +" transmis par innondation");
+						}
 					}
 				}
 			}
@@ -243,11 +233,7 @@ public class AccessPointNode extends TerminalNode
 	
 	public void transmitAddress(NetworkAddressI addr) throws Exception
 	{
-		System.out.println("643");
-		this.logMessage("103");
 		routes.add(new RouteInfo(addr,1));
-		this.logMessage("113");
-		System.out.println("773");
 	}
 	
 	@Override
@@ -266,7 +252,15 @@ public class AccessPointNode extends TerminalNode
 		{	
 			MessageI m = new Message(new NodeAddress("0.0.0.1"), "tata" , 10);
 			neighbours = this.routboundPort.registerAccessPoint(this.getAddr(), this.TERMINALNODEINBOUNDPORTURI, this.getPos(), this.getPortee(), this.ACCESSPOINTINBOUNDPORTURI);
-			this.logMessage("63");
+			for(ConnectionInfo ci : neighbours)
+			{
+				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+				this.doPortDisconnection(this.outboundPort.getPortURI());
+				if(this.rtoutboundPort.connected())
+				{
+					this.doPortDisconnection(this.rtoutboundPort.getPortURI());
+				}
+			}
 			this.transmitMessage(m);
 			
 		}catch (Exception e)
