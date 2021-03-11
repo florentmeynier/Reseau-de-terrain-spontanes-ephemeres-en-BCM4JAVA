@@ -1,7 +1,9 @@
 package component.terminalNode;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -43,7 +45,7 @@ public class TerminalNode extends AbstractComponent
 	private double portee;
 	
 	protected Set<ConnectionInfo> neighbours = new HashSet<>();
-	protected Set<RouteInfo> routes = new HashSet<>();
+	protected Map<NodeAddressI,Set<RouteInfo>> tables = new HashMap<>();
 	
 	protected TerminalNode(NodeAddressI addr, PositionI pos, double portee) throws Exception 
 	{
@@ -82,7 +84,8 @@ public class TerminalNode extends AbstractComponent
 	}
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
-		routes.add(new RouteInfo(address,1));
+		tables.putIfAbsent(getAddr(), new HashSet<>());
+		tables.get(getAddr()).add(new RouteInfo(address,1));
 		if(this.outboundPort.connected())
 		{
 			this.doPortDisconnection(this.outboundPort.getPortURI());
@@ -149,18 +152,50 @@ public class TerminalNode extends AbstractComponent
 	
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
-		for(RouteInfo ri : routes)
+		int minHops = Integer.MAX_VALUE;
+		NodeAddressI tmp = null;
+		
+		if(tables.get(this.getAddr()) != null)
 		{
-			if(ri.getDestination().equals(address))
+			for(RouteInfo ri : tables.get(this.getAddr()))
 			{
 				for(ConnectionInfo ci : neighbours)
 				{
-					if(ci.getAddress().equals(ri.getDestination()))
+					if(ri.getDestination().equals(address) && ri.getDestination().equals(ci.getAddress()) && ci.isRouting())
 					{
 						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 						return true;
 					}
 				}
+			}
+		}
+		for(NodeAddressI sri : tables.keySet())
+		{
+			for(RouteInfo ri : tables.get(sri))
+			{
+				for(ConnectionInfo ci : neighbours)
+				{
+					if(ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.getAddress().equals(ri.getDestination()) && ci.isRouting())
+					{
+						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+						return true;
+					}else
+					{
+						if(ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.isRouting() && minHops > ri.getNumberOfHops())
+						{
+							minHops = ri.getNumberOfHops();
+							tmp = sri;
+						}
+					}
+				}
+			}
+		}
+		for(ConnectionInfo ci : neighbours)
+		{
+			if(ci.getAddress().equals(tmp))
+			{
+				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+				return true;
 			}
 		}
 		return false;
@@ -198,13 +233,13 @@ public class TerminalNode extends AbstractComponent
 			
 			if(!(this instanceof RoutingNode) && !(this instanceof AccessPointNode))
 			{
-				MessageI m = new Message(new NodeAddress("0.0.0.3"), "coco" ,10);
+				MessageI m = new Message(new NodeAddress("0.0.0.4"), "coco" ,10);
 				neighbours = this.routboundPort.registerTerminalNode(this.addr, this.TERMINALNODEINBOUNDPORTURI, this.pos, this.portee);
 				for(ConnectionInfo ci : neighbours)
 				{
 					
 					this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-					this.doPortDisconnection(this.outboundPort.getPortURI());
+					
 					
 				}
 				this.transmitMessage(m);

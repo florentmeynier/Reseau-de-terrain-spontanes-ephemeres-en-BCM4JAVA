@@ -1,5 +1,6 @@
 package component.routingNode;
 
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -64,37 +65,26 @@ public class RoutingNode extends TerminalNode
 				this.doPortDisconnection(this.outboundPort.getPortURI());
 			}
 			super.connect(address, communicationInboundPortURI);
-			this.rtoutboundPort.updateRouting(this.getAddr(), this.routes);
+			this.rtoutboundPort.updateRouting(this.getAddr(), this.tables.get(this.getAddr()));
 		}
 		
 	}
 	
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
-		boolean parcouru = false;
-		for (RouteInfo ri : routes)
+		tables.putIfAbsent(neighbour, routes);
+	
+		for(RouteInfo ri : routes)
 		{
-			for(RouteInfo mri : this.routes)
+			for(RouteInfo mri : tables.get(neighbour))
 			{
-				if(ri.getDestination().equals(mri.getDestination()))
+				if(ri.getDestination().equals(mri.getDestination()) && mri.getNumberOfHops()>ri.getNumberOfHops())
 				{
-					if(ri.getNumberOfHops()+1 < mri.getNumberOfHops())
-					{
-						this.routes.remove(mri);
-						this.routes.add(ri);
-					}
-					parcouru = false;
-					break;
+					tables.get(neighbour).remove(mri);
+					tables.get(neighbour).add(ri);
 				}
-				parcouru = true;
-			}
-			if(parcouru)
-			{
-				this.routes.add(new RouteInfo(ri.getDestination(),ri.getNumberOfHops()+1));
-				parcouru = false;
 			}
 		}
-		this.routes.add(new RouteInfo(neighbour,1));
 	}
 	
 	public void transmitMessage(MessageI m) throws Exception
@@ -151,49 +141,63 @@ public class RoutingNode extends TerminalNode
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
 		int minHops = Integer.MAX_VALUE;
-		ConnectionInfo tmp = null;
+		NodeAddressI tmp = null;
 		
-		for(RouteInfo ri : routes)
+		if(tables.get(this.getAddr()) != null)
 		{
-			if(ri.getDestination().equals(address))
+			for(RouteInfo ri : tables.get(this.getAddr()))
 			{
 				for(ConnectionInfo ci : neighbours)
 				{
-					if(ci.getAddress().equals(ri.getDestination()))
+					if(ri.getDestination().equals(address) && ri.getDestination().equals(ci.getAddress()))
 					{
-						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(), ci.getRoutingInboundURI());
+						return true;
+					}
+				}
+			}
+		}
+		for(NodeAddressI sri : tables.keySet())
+		{
+			for(RouteInfo ri : tables.get(sri))
+			{
+				for(ConnectionInfo ci : neighbours)
+				{
+					if(ci.getAddress().equals(sri) && ri.getDestination().equals(address))
+					{
+						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(), ci.getRoutingInboundURI());
 						return true;
 					}else
 					{
-						if(ci.isRouting())
+						if(ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.isRouting() && minHops > ri.getNumberOfHops())
 						{
-							if(ri.getNumberOfHops() < minHops)
-							{
-								tmp = ci;
-								minHops = ri.getNumberOfHops();
-							}
+							minHops = ri.getNumberOfHops();
+							tmp = sri;
 						}
 					}
 				}
-				
 			}
 		}
-		if(tmp != null)
+		for(ConnectionInfo ci : neighbours)
 		{
-			this.connectRouting(tmp.getAddress(), tmp.getCommunicationInboundPortURI(), tmp.getRoutingInboundURI());
-			return true;
+			if(ci.getAddress().equals(tmp))
+			{
+				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+				return true;
+			}
 		}
 		return false;
 	}
 	
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{
-		for(RouteInfo ri : routes)
+		tables.putIfAbsent(this.getAddr(), new HashSet<>());
+		for(RouteInfo ri : tables.get(this.getAddr()))
 		{
-			if(ri.getDestination().equals(neighbour) && ri.getNumberOfHops() < numberOfHops)
+			if(ri.getDestination().equals(neighbour))
 			{
-				routes.remove(ri);
-				routes.add(new RouteInfo(neighbour, numberOfHops));
+				tables.get(this.getAddr()).remove(ri);
+				tables.get(this.getAddr()).add(new RouteInfo(neighbour, numberOfHops));
 			}
 				
 		}
@@ -219,11 +223,7 @@ public class RoutingNode extends TerminalNode
 			for(ConnectionInfo ci : neighbours)
 			{
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-				this.doPortDisconnection(this.outboundPort.getPortURI());
-				if(this.rtoutboundPort.connected())
-				{
-					this.doPortDisconnection(this.rtoutboundPort.getPortURI());
-				}
+				
 			}
 			this.transmitMessage(m);
 

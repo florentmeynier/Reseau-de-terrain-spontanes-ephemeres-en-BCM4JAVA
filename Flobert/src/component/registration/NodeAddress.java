@@ -29,6 +29,10 @@ public class NodeAddress implements NodeAddressI
 	@Override
 	public boolean equals(AddressI a) throws Exception 
 	{
+		if(a == null)
+		{
+			return false;
+		}
 		if(!a.isNodeAddress())
 			return false;
 		NodeAddress address = (NodeAddress)  a;
