@@ -4,6 +4,7 @@ package component.networkNode;
 import component.accessPointNode.AccessPointNode;
 import component.networkNode.interfaces.NetworkNodeCI;
 import component.registration.NetworkAddress;
+import component.registration.NodeAddress;
 import component.registration.interfaces.NetworkAddressI;
 import component.terminalNode.Message;
 import component.terminalNode.interfaces.MessageI;
@@ -89,11 +90,13 @@ public class NetworkNode extends AbstractComponent
 		super.execute();
 		try
 		{
-			MessageI m = new Message(new NetworkAddress("1.0.0.4"), "coucou" , 10);
+			MessageI m = new Message(new NodeAddress("0.0.0.2"), "coucou" , 10);
+			MessageI m2 = new Message(new NetworkAddress("1.0.0.0"), "kiki" , 10);
 			if(this.outboundPort.connected())
 			{
 				this.transmitAddress(this.addr);
 				this.transmitMessage(m);
+				this.transmitMessage(m2);
 			}else
 			{
 				this.logMessage("pas d'accessPoint à qui relayer le message " + m.getContent());
