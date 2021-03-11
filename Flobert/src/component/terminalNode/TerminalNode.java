@@ -104,7 +104,6 @@ public class TerminalNode extends AbstractComponent
 		if(m.getAddress().equals(addr))
 		{
 			this.logMessage("message recu " + m.getContent());
-			return;
 		}else
 		{
 			if(this.hasRouteFor(m.getAddress()))
@@ -125,7 +124,7 @@ public class TerminalNode extends AbstractComponent
 			{
 				if(this.neighbours.isEmpty())
 				{
-					this.logMessage("Pas de voisin a qui transferer le message");
+					this.logMessage("Pas de voisin a qui transferer le message " + m.getContent());
 				}else
 				{
 					int r = 0;

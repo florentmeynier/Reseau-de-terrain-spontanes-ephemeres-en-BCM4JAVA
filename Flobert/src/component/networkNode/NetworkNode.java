@@ -45,7 +45,7 @@ public class NetworkNode extends AbstractComponent
 		if(m.getAddress().equals(addr))
 		{
 			this.logMessage("message recu " + m.getContent());
-			return;
+			
 		}else
 		{
 			if(this.outboundPort.connected())

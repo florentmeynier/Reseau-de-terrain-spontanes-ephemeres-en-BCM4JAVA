@@ -173,7 +173,6 @@ public class AccessPointNode extends TerminalNode
 		if(m.getAddress().equals(this.getAddr()))
 		{
 			this.logMessage("message recu " + m.getContent());
-			return;
 		}else
 		{
 			if(this.apninboundPort.connected() && m.getAddress().isNetworkAddress())
@@ -184,71 +183,61 @@ public class AccessPointNode extends TerminalNode
 					{
 						if(ri.getDestination().isNetworkAddress() && ri.getDestination().equals(m.getAddress()))
 						{
-							m.decrementHops();
-							this.apninboundPort.transmitMessage(m);
-							this.logMessage("message " + m.getContent() +" transmis au noeud du reseau");
+							if(m.stillAlive())
+							{
+								m.decrementHops();
+								this.apninboundPort.transmitMessage(m);
+								this.logMessage("message " + m.getContent() +" transmis au noeud du reseau");
+								return;
+							}else
+							{
+								this.logMessage("message "+ m.getContent() +" est mort");
+								return;
+							}
 						}
 					}
+				}
+				
+			}
+			if(this.hasRouteFor(m.getAddress()))
+			{
+				this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
+
+
+				if(m.stillAlive())
+				{
+					m.decrementHops();
+					this.outboundPort.transmitMessage(m);
+					this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
+
 				}else
 				{
-					this.logMessage("pas connecte au noeud du reseau voulu");
-					if(m.stillAlive())
-					{
-						if(this.hasRouteFor(m.getAddress()))
-						{
-							this.outboundPort.transmitMessage(m);
-							this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
-						}else
-						{
-							this.logMessage("Pas de voisin a qui transferer le message");
-						}
-					}else
-					{
-						this.logMessage("message "+ m.getContent() +" est mort");
-					}
+					this.logMessage("message "+ m.getContent() +" est mort");
 				}
 			}else
 			{
-				if(this.hasRouteFor(m.getAddress()))
+				if(this.neighbours.isEmpty())
 				{
-					this.logMessage("message " + m.getContent() +" vivant ? " + m.stillAlive());
-
-
-					if(m.stillAlive())
-					{
-						m.decrementHops();
-						this.outboundPort.transmitMessage(m);
-						this.logMessage("message "+ m.getContent() +" transmis au noeud routeur");
-
-					}else
-					{
-						this.logMessage("message "+ m.getContent() +" est mort");
-					}
+					this.logMessage("Pas de voisin a qui transferer le message " + m.getContent());
 				}else
 				{
-					if(this.neighbours.isEmpty())
+					int r = 0;
+					ConnectionInfo ci = null;
+					while(ci == null)
 					{
-						this.logMessage("Pas de voisin a qui transferer le message");
-					}else
+						r = (new Random()).nextInt(neighbours.size());
+						ci  = (ConnectionInfo) neighbours.toArray()[r];
+					}
+					if(m.stillAlive())
 					{
-						int r = 0;
-						ConnectionInfo ci = null;
-						while(ci == null)
+						if(this.outboundPort.connected())
 						{
-							r = (new Random()).nextInt(neighbours.size());
-							ci  = (ConnectionInfo) neighbours.toArray()[r];
+							this.doPortDisconnection(this.outboundPort.getPortURI());
 						}
-						if(m.stillAlive())
-						{
-							if(this.outboundPort.connected())
-							{
-								this.doPortDisconnection(this.outboundPort.getPortURI());
-							}
-							this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-							m.decrementHops();
-							this.outboundPort.transmitMessage(m);
-							this.logMessage("message "+ m.getContent() +" transmis par innondation");
-						}
+						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
+						m.decrementHops();
+						this.outboundPort.transmitMessage(m);
+						this.logMessage("message "+ m.getContent() +" transmis par innondation");
 					}
 				}
 			}
