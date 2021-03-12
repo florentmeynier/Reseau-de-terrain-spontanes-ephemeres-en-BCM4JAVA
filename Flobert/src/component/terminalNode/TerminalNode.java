@@ -188,13 +188,13 @@ public class TerminalNode extends AbstractComponent
 			{
 				for(ConnectionInfo ci : neighbours)
 				{
-					if(ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.getAddress().equals(ri.getDestination()) && ci.isRouting())
+					if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.getAddress().equals(ri.getDestination()))
 					{
 						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 						return true;
 					}else
 					{
-						if(ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.isRouting() && minHops > ri.getNumberOfHops())
+						if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ri.getNumberOfHops() < minHops)
 						{
 							minHops = ri.getNumberOfHops();
 							tmp = sri;

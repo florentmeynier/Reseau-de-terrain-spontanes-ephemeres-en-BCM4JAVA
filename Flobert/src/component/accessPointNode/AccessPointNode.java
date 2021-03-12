@@ -142,13 +142,13 @@ public class AccessPointNode extends TerminalNode
 			{
 				for(ConnectionInfo ci : neighbours)
 				{
-					if(ci.getAddress().equals(sri) && ri.getDestination().equals(address))
+					if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address))
 					{
 						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
 						return true;
 					}else
 					{
-						if(ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.isRouting() && minHops > ri.getNumberOfHops())
+						if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ri.getNumberOfHops() < minHops)
 						{
 							minHops = ri.getNumberOfHops();
 							tmp = sri;
