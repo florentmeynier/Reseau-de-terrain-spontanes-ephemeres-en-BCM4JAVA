@@ -58,6 +58,9 @@ public class NetworkNode extends AbstractComponent
 					this.outboundPort.transmitMessage(m);
 					this.logMessage("message "+ m.getContent() +" transmis à l'accessPoint");
 				}
+			}else
+			{
+				this.logMessage("pas d'accesspoint connecte pour transferer le message "+m.getContent());
 			}
 		}
 	}

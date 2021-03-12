@@ -129,20 +129,34 @@ public class TerminalNode extends AbstractComponent
 				{
 					int r = 0;
 					ConnectionInfo ci = null;
-					while(ci == null)
+					Set<ConnectionInfo> voisinsRouteur = new HashSet<>();
+					for(ConnectionInfo c : neighbours)
 					{
-						r = (new Random()).nextInt(neighbours.size());
-						ci  = (ConnectionInfo) neighbours.toArray()[r];
+						if(c.isRouting())
+						{
+							voisinsRouteur.add(c);
+						}
 					}
-					if(m.stillAlive())
+					if(voisinsRouteur.isEmpty())
 					{
-						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-						m.decrementHops();
-						this.outboundPort.transmitMessage(m);
-						this.logMessage("message "+ m.getContent() +" transmis par innondation");
+						this.logMessage("Pas de voisins routeurs a qui innonder le message " + m.getContent());
 					}else
 					{
-						this.logMessage("message "+ m.getContent() +" est mort");
+						while(ci == null)
+						{
+							r = (new Random()).nextInt(voisinsRouteur.size());
+							ci  = (ConnectionInfo) voisinsRouteur.toArray()[r];
+						}
+						if(m.stillAlive())
+						{
+							this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
+							m.decrementHops();
+							this.outboundPort.transmitMessage(m);
+							this.logMessage("message "+ m.getContent() +" transmis par innondation au noeud routeur");
+						}else
+						{
+							this.logMessage("message "+ m.getContent() +" est mort");
+						}
 					}
 				}
 			}
