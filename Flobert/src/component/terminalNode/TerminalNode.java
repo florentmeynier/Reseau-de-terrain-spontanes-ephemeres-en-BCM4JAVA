@@ -142,11 +142,10 @@ public class TerminalNode extends AbstractComponent
 						this.logMessage("Pas de voisins routeurs a qui innonder le message " + m.getContent());
 					}else
 					{
-						while(ci == null)
-						{
-							r = (new Random()).nextInt(voisinsRouteur.size());
-							ci  = (ConnectionInfo) voisinsRouteur.toArray()[r];
-						}
+						
+						r = (new Random()).nextInt(voisinsRouteur.size());
+						ci  = (ConnectionInfo) voisinsRouteur.toArray()[r];
+						
 						if(m.stillAlive())
 						{
 							this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());

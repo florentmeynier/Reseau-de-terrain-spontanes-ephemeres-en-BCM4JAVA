@@ -130,11 +130,9 @@ public class RoutingNode extends TerminalNode
 						this.logMessage("Pas de voisins routeurs a qui innonder le message " + m.getContent());
 					}else
 					{
-						while(ci == null)
-						{
-							r = (new Random()).nextInt(voisinsRouteur.size());
-							ci  = (ConnectionInfo) voisinsRouteur.toArray()[r];
-						}
+						r = (new Random()).nextInt(voisinsRouteur.size());
+						ci  = (ConnectionInfo) voisinsRouteur.toArray()[r];
+						
 						if(m.stillAlive())
 						{
 							this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
