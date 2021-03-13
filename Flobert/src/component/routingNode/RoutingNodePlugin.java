@@ -12,6 +12,7 @@ public class RoutingNodePlugin extends AbstractPlugin
 {
 	private static final long serialVersionUID = 1L;
 	
+	
 	private RoutingNode node;
 	
 	public RoutingNodePlugin(NodeAddressI addr, PositionI pos, double portee) throws Exception 
