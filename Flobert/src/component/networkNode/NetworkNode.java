@@ -114,9 +114,11 @@ public class NetworkNode extends AbstractComponent
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException
 	{
-		try {
+		try 
+		{
 			this.outboundPort.unpublishPort();
-		}  catch (Exception e) {
+		}  catch (Exception e) 
+		{
 			throw new ComponentShutdownException(e);
 		}
 		super.shutdown();
