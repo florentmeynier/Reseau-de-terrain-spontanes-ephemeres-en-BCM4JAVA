@@ -20,9 +20,13 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 
+/**
+ * classe representant un composant RoutingNode.
+ * @author florentmeynier
+ *
+ */
 @OfferedInterfaces(offered = {CommunicationCI.class,RoutingCI.class})
 @RequiredInterfaces(required = {RegistrationCI.class, CommunicationCI.class, RoutingCI.class})
-
 public class RoutingNode extends TerminalNode  
 {
 	
@@ -36,7 +40,13 @@ public class RoutingNode extends TerminalNode
 	protected RoutingOutboundPort rtoutboundPort;
 	
 
-	
+	/**
+	 * constructeur utilisant l'addresse, la position et la portee du noeud. Il instancie et publie les ports necessaires a celui-ci.
+	 * @param addr
+	 * @param pos
+	 * @param portee
+	 * @throws Exception
+	 */
 	protected RoutingNode(NodeAddressI addr, PositionI pos, double portee) throws Exception 
 	{
 		super(addr,pos,portee);
@@ -48,6 +58,7 @@ public class RoutingNode extends TerminalNode
 		this.rtoutboundPort.publishPort();
 	}
 	
+	@Override
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
 		if(routingInboundPortURI == null)
@@ -69,7 +80,12 @@ public class RoutingNode extends TerminalNode
 		}
 		
 	}
-	
+	/**
+	 * met a jour les tables de routages d'un noeud routeur.
+	 * @param neighbour
+	 * @param routes
+	 * @throws Exception
+	 */
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
 		tables.putIfAbsent(neighbour, routes);
@@ -87,6 +103,7 @@ public class RoutingNode extends TerminalNode
 		}
 	}
 	
+	@Override
 	public void transmitMessage(MessageI m) throws Exception
 	{
 		if(m.getAddress().equals(this.getAddr()))
@@ -149,6 +166,7 @@ public class RoutingNode extends TerminalNode
 		}
 	}
 	
+	@Override
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
 		int minHops = Integer.MAX_VALUE;
@@ -200,6 +218,12 @@ public class RoutingNode extends TerminalNode
 		return false;
 	}
 	
+	/**
+	 * met a jour les nouvelles informations sur un accessPoint.
+	 * @param neighbour
+	 * @param numberOfHops
+	 * @throws Exception
+	 */
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{
 		tables.putIfAbsent(this.getAddr(), new HashSet<>());

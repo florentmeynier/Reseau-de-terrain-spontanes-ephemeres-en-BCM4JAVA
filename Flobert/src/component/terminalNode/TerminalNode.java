@@ -25,6 +25,11 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 
+/**
+ * classe representant un composant noeud terminal.
+ * @author florentmeynier
+ *
+ */
 @OfferedInterfaces(offered = {CommunicationCI.class})
 @RequiredInterfaces(required = {RegistrationCI.class, CommunicationCI.class})
 public class TerminalNode extends AbstractComponent 
@@ -47,6 +52,13 @@ public class TerminalNode extends AbstractComponent
 	protected Set<ConnectionInfo> neighbours = new HashSet<>();
 	protected Map<NodeAddressI,Set<RouteInfo>> tables = new HashMap<>();
 	
+	/**
+	 * constructeur utilisant l'addresse, la position et la portee du noeud. Il instancie et publie les ports necessaires a celui-ci.
+	 * @param addr
+	 * @param pos
+	 * @param portee
+	 * @throws Exception
+	 */
 	protected TerminalNode(NodeAddressI addr, PositionI pos, double portee) throws Exception 
 	{
 		super(1, 0);
@@ -68,20 +80,39 @@ public class TerminalNode extends AbstractComponent
 		cpt++;
 	}
 
+	/**
+	 * accesseur sur l'addresse.
+	 * @return l'addresse du noeud.
+	 */
 	public NodeAddressI getAddr() 
 	{
 		return addr;
 	}
-
+	
+	/**
+	 * accesseur sur la position.
+	 * @return la position du noeud.
+	 */
 	public PositionI getPos() 
 	{
 		return pos;
 	}
 
+	/**
+	 * accesseur sur la portee.
+	 * @return la portee du noeud.
+	 */
 	public double getPortee() 
 	{
 		return portee;
 	}
+	
+	/**
+	 * connecte deux noeuds du reseau ephemere.
+	 * @param address
+	 * @param communicationInboundPortURI
+	 * @throws Exception
+	 */
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
 		tables.putIfAbsent(getAddr(), new HashSet<>());
@@ -93,11 +124,23 @@ public class TerminalNode extends AbstractComponent
 		this.doPortConnection(this.outboundPort.getPortURI(), communicationInboundPortURI, ConnectorTerminalNode.class.getCanonicalName());
 	}
 	
+	/**
+	 * connecte un noeud avec un noeud routeur du reseau ephemere.
+	 * @param address
+	 * @param communicationInboundPortURI
+	 * @param routingInboundPortURI
+	 * @throws Exception
+	 */
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
 		return;
 	}
 	
+	/**
+	 * si le noeud du reseau ephemere est le destinataire du message alors il le recoit sinon il transmet le message sur le reseau.
+	 * @param m
+	 * @throws Exception
+	 */
 	public void transmitMessage(MessageI m) throws Exception
 	{
 		
@@ -162,6 +205,12 @@ public class TerminalNode extends AbstractComponent
 		}
 	}
 	
+	/**
+	 * cherche une route pour atteindre une destination dans les tables de routage.
+	 * @param address
+	 * @return vrai si une route existe, faux sinon.
+	 * @throws Exception
+	 */
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
 		int minHops = Integer.MAX_VALUE;

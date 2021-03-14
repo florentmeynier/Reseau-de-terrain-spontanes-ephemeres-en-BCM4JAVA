@@ -7,6 +7,11 @@ import component.routingNode.interfaces.RoutingCI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
+/**
+ * classe representant l'inboundPort d'un noeud routeur.
+ * @author florentmeynier
+ *
+ */
 public class RoutingNodeInboundPort extends AbstractInboundPort implements RoutingCI
 {
 
@@ -15,12 +20,23 @@ public class RoutingNodeInboundPort extends AbstractInboundPort implements Routi
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * constructeur a partir d'un composant.
+	 * @param owner
+	 * @throws Exception
+	 */
 	public RoutingNodeInboundPort(ComponentI owner) throws Exception
 	{
 		super(RoutingCI.class, owner);
 		assert(owner instanceof RoutingNode);
 	}
 	
+	/**
+	 * constructeur a partir d'une URI et d'un composant.
+	 * @param uri
+	 * @param owner
+	 * @throws Exception
+	 */
 	public RoutingNodeInboundPort(String uri, ComponentI owner) throws Exception
 	{
 		super(uri, RoutingCI.class, owner);

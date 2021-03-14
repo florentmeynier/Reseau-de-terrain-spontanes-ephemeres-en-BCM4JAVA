@@ -9,16 +9,32 @@ import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 
+/**
+ * classe representant l'outboundPort d'un noeud terminal.
+ * @author florentmeynier
+ *
+ */
 public class TerminalNodeOutbound extends AbstractOutboundPort implements CommunicationCI
 {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * constructeur a partir d'un composant.
+	 * @param owner
+	 * @throws Exception
+	 */
 	public TerminalNodeOutbound(ComponentI owner) throws Exception 
 	{
 		super(CommunicationCI.class, owner);
 	}
 	
+	/**
+	 * constructeur a partir d'une URI et d'un composant.
+	 * @param uri
+	 * @param owner
+	 * @throws Exception
+	 */
 	public TerminalNodeOutbound(String uri, ComponentI owner) throws Exception 
 	{
 		super(uri, CommunicationCI.class, owner);

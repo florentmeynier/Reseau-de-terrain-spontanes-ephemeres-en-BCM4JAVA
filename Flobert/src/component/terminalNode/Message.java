@@ -5,13 +5,23 @@ import java.io.Serializable;
 import component.registration.interfaces.AddressI;
 import component.terminalNode.interfaces.MessageI;
 
-
+/**
+ * classe stockant les informations d'un message.
+ * @author florentmeynier
+ *
+ */
 public class Message implements MessageI 
 {
 	private AddressI address;
 	private Serializable content;
 	private int hops;
 	
+	/**
+	 * constructeur qui initialise les parametres necessaires aux messages.
+	 * @param address
+	 * @param content
+	 * @param hops
+	 */
 	public Message(AddressI address, Serializable content, int hops) 
 	{
 		this.address = address;

@@ -9,6 +9,11 @@ import component.registration.interfaces.RegistrationCI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 
+/**
+ * classe representant l'outboundPort d'un noeud du reseau ephemere vers le gestionnaire du reseau.
+ * @author florentmeynier
+ *
+ */
 public class TerminalNodeRegistrationOutboundPort extends 
 AbstractOutboundPort 
 implements RegistrationCI 
@@ -16,6 +21,11 @@ implements RegistrationCI
 	
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * constructeur a partir d'un composant.
+	 * @param owner
+	 * @throws Exception
+	 */
 	public TerminalNodeRegistrationOutboundPort(ComponentI owner)
 			throws Exception 
 	{
@@ -23,6 +33,12 @@ implements RegistrationCI
 		// TODO Auto-generated constructor stub
 	}
 	
+	/**
+	 * constructeur a partir d'une URI et d'un composant.
+	 * @param uri
+	 * @param owner
+	 * @throws Exception
+	 */
 	public TerminalNodeRegistrationOutboundPort(String uri, ComponentI owner) throws Exception 
 	{
 		super(uri, RegistrationCI.class, owner);

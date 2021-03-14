@@ -8,6 +8,11 @@ import component.registration.interfaces.PositionI;
 import component.registration.interfaces.RegistrationCI;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 
+/**
+ * classe representant un connecteur entre un noeud du reseau ephemere et un composant gestionnaire du reseau.
+ * @author florentmeynier
+ *
+ */
 public class ConnectorRegistration extends AbstractConnector implements RegistrationCI 
 {
 

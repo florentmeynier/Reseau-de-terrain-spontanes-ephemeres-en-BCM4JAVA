@@ -7,6 +7,11 @@ import component.terminalNode.interfaces.CommunicationCI;
 import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 
+/**
+ * classe represnentant un connecteur entre deux noeuds du reseau ephemere.
+ * @author florentmeynier
+ *
+ */
 public class ConnectorTerminalNode extends AbstractConnector implements CommunicationCI
 {
 
