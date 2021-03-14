@@ -5,6 +5,10 @@ import component.registration.interfaces.NetworkAddressI;
 import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 
+/**
+ * classe representant un connecteur entre un composant NetworkNode et un composant AccessPointNode.
+ * @author habibbouchenaki
+ */
 public class ConnectorNetworkNode extends AbstractConnector implements NetworkNodeCI
 {
 

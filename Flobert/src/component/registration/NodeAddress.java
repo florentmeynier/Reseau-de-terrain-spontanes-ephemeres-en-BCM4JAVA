@@ -3,10 +3,18 @@ package component.registration;
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
 
+/**
+ * classe representant l'addresse d'un noeud du reseau ephemere.
+ * @author habibbouchenaki
+ */
 public class NodeAddress implements NodeAddressI 
 {
 	private String addr;
 	
+	/**
+	 * constructeur qui initialise l'addresse. 
+	 * @param addr
+	 */
 	public NodeAddress(String addr) 
 	{
 		this.addr = addr;
@@ -41,6 +49,10 @@ public class NodeAddress implements NodeAddressI
 		return true;
 	}
 
+	/**
+	 * accesseur sur addr.
+	 * @return la chaine representant une addresse d'un noeud du reseau ephemere.
+	 */
 	public String getAddr() {
 		return addr;
 	}

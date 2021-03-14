@@ -13,7 +13,10 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 
-
+/**
+ * classe representant un composant noeud du reseau.
+ * @author habibbouchenaki
+ */
 @RequiredInterfaces(required = {NetworkNodeCI.class})
 public class NetworkNode extends AbstractComponent 
 {
@@ -24,7 +27,11 @@ public class NetworkNode extends AbstractComponent
 	private NetworkAddressI addr;
 	public static int cpt2 = 0;
 	
-
+	/**
+	 * construit le NetwordNode et publie les noeuds necessaires.
+	 * @param addr
+	 * @throws Exception
+	 */
 	protected NetworkNode(NetworkAddressI addr) throws Exception 
 	{
 		super(1,0);
@@ -38,7 +45,11 @@ public class NetworkNode extends AbstractComponent
 		
 	}
 
-
+	/**
+	 * si le noeud du reseau est le destinataire du message alors il le recoit sinon si il est connecte a un AccessPoint, alors on lui transmet le message.
+	 * @param m
+	 * @throws Exception
+	 */
 	public void transmitMessage(MessageI m) throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -65,6 +76,11 @@ public class NetworkNode extends AbstractComponent
 		}
 	}
 	
+	/**
+	 * transmet l'addresse de ce noeud a son AccessPoint.
+	 * @param addr
+	 * @throws Exception
+	 */
 	public void transmitAddress (NetworkAddressI addr) throws Exception
 	{
 		if(this.outboundPort.connected())

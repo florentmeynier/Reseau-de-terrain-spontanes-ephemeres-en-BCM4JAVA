@@ -8,6 +8,10 @@ import component.routingNode.interfaces.RoutingCI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
+/**
+ * classe representant le port entrant routeur d'un AccessPoint.
+ * @author habibbouchenaki
+ */
 public class AccessPointNodeInboundPort extends AbstractInboundPort implements RoutingCI 
 {
 
@@ -16,12 +20,23 @@ public class AccessPointNodeInboundPort extends AbstractInboundPort implements R
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * constructeur a partir d'un composant.
+	 * @param owner
+	 * @throws Exception
+	 */
 	public AccessPointNodeInboundPort(ComponentI owner) throws Exception
 	{
 		super(RoutingCI.class, owner);
 		assert(owner instanceof AccessPointNode);
 	}
 	
+	/**
+	 * constructeur a partir d'une URI et d'un composant.
+	 * @param uri
+	 * @param owner
+	 * @throws Exception
+	 */
 	public AccessPointNodeInboundPort(String uri, ComponentI owner) throws Exception
 	{
 		super(uri, RoutingCI.class, owner);

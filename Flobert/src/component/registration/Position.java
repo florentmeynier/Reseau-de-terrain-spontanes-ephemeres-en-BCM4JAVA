@@ -2,11 +2,20 @@ package component.registration;
 
 import component.registration.interfaces.PositionI;
 
+/**
+ * classe representant la position d'un noeud.
+ * @author habibbouchenaki
+ */
 public class Position implements PositionI 
 {
 	private double x;
 	private double y;
 	
+	/**
+	 * initialise les coordonnees de la position.
+	 * @param x
+	 * @param y
+	 */
 	public Position(double x, double y) 
 	{
 		this.x = x;
@@ -14,14 +23,19 @@ public class Position implements PositionI
 	}
 	
 	
-
+	/**
+	 * accesseur sur X
+	 * @return l'abscisse de la position.
+	 */
 	public double getX() 
 	{
 		return x;
 	}
 
-
-
+	/**
+	 * accesseur sur Y
+	 * @return l'ordonnee de la position.
+	 */
 	public double getY() 
 	{
 		return y;

@@ -208,10 +208,11 @@ public class RoutingNode extends TerminalNode
 			if(ri.getDestination().equals(neighbour))
 			{
 				tables.get(this.getAddr()).remove(ri);
-				tables.get(this.getAddr()).add(new RouteInfo(neighbour, numberOfHops));
+				break;
 			}
 				
 		}
+		tables.get(this.getAddr()).add(new RouteInfo(neighbour, numberOfHops));
 	}
 	
 	@Override

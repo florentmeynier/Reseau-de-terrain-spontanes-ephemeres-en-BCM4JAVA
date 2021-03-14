@@ -6,6 +6,10 @@ import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
+/**
+ * classe representant le port entrant d'un NetworkNode.
+ * @author habibbouchenaki
+ */
 public class NetworkNodeInbound extends AbstractInboundPort implements NetworkNodeCI
 {
 	/**
@@ -13,12 +17,23 @@ public class NetworkNodeInbound extends AbstractInboundPort implements NetworkNo
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * constructeur a partir d'un composant.
+	 * @param owner
+	 * @throws Exception
+	 */
 	public NetworkNodeInbound(ComponentI owner) throws Exception
 	{
 		super(NetworkNodeCI.class, owner);
 		assert(owner instanceof NetworkNode);
 	}
 	
+	/**
+	 * constructeur a partir d'une URI et d'un composant.
+	 * @param uri
+	 * @param owner
+	 * @throws Exception
+	 */
 	public NetworkNodeInbound(String uri, ComponentI owner) throws Exception
 	{
 		super(uri, NetworkNodeCI.class, owner);
