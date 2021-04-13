@@ -47,7 +47,14 @@ public class RoutingNodeInboundPort extends AbstractInboundPort implements Routi
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> route) throws Exception 
 	{
 		// TODO Auto-generated method stub
-		this.getOwner().handleRequest(c -> {((RoutingNode) c).updateRouting(neighbour, route); return null;});
+		this.getOwner().runTask(c -> {
+			try {
+				((RoutingNode) c).updateRouting(neighbour, route);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 
 	}
 
@@ -55,7 +62,14 @@ public class RoutingNodeInboundPort extends AbstractInboundPort implements Routi
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception 
 	{
 		// TODO Auto-generated method stub
-		this.getOwner().handleRequest(c -> {((RoutingNode) c).updateAccessPoint(neighbour, numberOfHops); return null;});
+		this.getOwner().runTask(c -> {
+			try {
+				((RoutingNode) c).updateAccessPoint(neighbour, numberOfHops);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 
 	}
 

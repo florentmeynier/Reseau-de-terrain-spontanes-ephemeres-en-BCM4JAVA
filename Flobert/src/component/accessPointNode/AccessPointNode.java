@@ -67,6 +67,7 @@ public class AccessPointNode extends TerminalNode
 		this.apinboundPort.publishPort();
 		this.rtoutboundPort.publishPort();
 		this.apninboundPort.publishPort();
+		createNewExecutorService("routage-uri",1,false);
 		cptnet++;
 		
 	}

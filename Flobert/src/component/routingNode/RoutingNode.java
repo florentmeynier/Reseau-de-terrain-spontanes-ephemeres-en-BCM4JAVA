@@ -56,6 +56,7 @@ public class RoutingNode extends TerminalNode
 		this.rtoutboundPort = new RoutingOutboundPort(this.ROUTINGOUTBOUNDPORTURI,this);
 		this.rinboundPort.publishPort();
 		this.rtoutboundPort.publishPort();
+		createNewExecutorService("routage-uri",1,false);
 	}
 	
 	@Override

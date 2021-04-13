@@ -44,7 +44,14 @@ public class NetworkNodeInbound extends AbstractInboundPort implements NetworkNo
 	public void transmitMessage(MessageI m) throws Exception 
 	{
 		// TODO Auto-generated method stub
-		this.getOwner().handleRequest(c -> {((NetworkNode) c).transmitMessage(m); return null;});
+		this.getOwner().runTask(c -> {
+			try {
+				((NetworkNode) c).transmitMessage(m);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 
 	}
 
@@ -52,7 +59,14 @@ public class NetworkNodeInbound extends AbstractInboundPort implements NetworkNo
 	public void transmitAddress(NetworkAddressI addr) throws Exception 
 	{
 		// TODO Auto-generated method stub
-		this.getOwner().handleRequest(c -> {((NetworkNode) c).transmitAddress(addr); return null;});
+		this.getOwner().runTask(c -> {
+			try {
+				((NetworkNode) c).transmitAddress(addr);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 
 }

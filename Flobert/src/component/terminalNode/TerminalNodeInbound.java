@@ -42,22 +42,42 @@ public class TerminalNodeInbound extends AbstractInboundPort implements Communic
 	@Override
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception 
 	{
-		this.getOwner().handleRequest(c -> {((TerminalNode) c).connect(address, communicationInboundPortURI); return null;});
-
+		this.getOwner().runTask(c -> {
+			try {
+				((TerminalNode) c).connect(address, communicationInboundPortURI);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Override
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI)
 			throws Exception 
 	{
-		this.getOwner().handleRequest(c -> {((TerminalNode) c).connectRouting(address, communicationInboundPortURI,routingInboundPortURI); return null;});
+		this.getOwner().runTask(c ->{
+			try {
+				((TerminalNode) c).connectRouting(address, communicationInboundPortURI,routingInboundPortURI);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 
 	}
 
 	@Override
 	public void transmitMessage(MessageI m) throws Exception 
 	{
-		this.getOwner().handleRequest(c -> {((TerminalNode) c).transmitMessage(m); return null;});
+		this.getOwner().runTask(c -> {
+			try {
+				((TerminalNode) c).transmitMessage(m);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 
 	}
 
@@ -70,7 +90,14 @@ public class TerminalNodeInbound extends AbstractInboundPort implements Communic
 	@Override
 	public void ping() throws Exception 
 	{
-		this.getOwner().handleRequest(c -> {((TerminalNode) c).ping(); return null;});
+		this.getOwner().runTask(c -> {
+			try {
+				((TerminalNode) c).ping();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 	
 }

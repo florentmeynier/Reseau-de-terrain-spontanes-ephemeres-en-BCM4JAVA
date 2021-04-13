@@ -76,7 +76,8 @@ public class TerminalNode extends AbstractComponent
 		this.routboundPort.publishPort();
 		this.toggleLogging();
 		this.toggleTracing();
-		
+		createNewExecutorService("mess-uri",1,false);
+		createNewExecutorService("connect-uri",1,false);
 		cpt++;
 	}
 
