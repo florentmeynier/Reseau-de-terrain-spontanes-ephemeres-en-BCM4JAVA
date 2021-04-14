@@ -242,12 +242,11 @@ public class TerminalNode extends AbstractComponent
 					}
 				}
 				
-				if(cc != null)
-				{
-					this.connect(cc.getAddress(), cc.getCommunicationInboundPortURI());
-					return true;
-				}
-				
+			}
+			if(cc != null)
+			{
+				this.connect(cc.getAddress(), cc.getCommunicationInboundPortURI());
+				return true;
 			}
 			for(NodeAddressI sri : tables.keySet())
 			{

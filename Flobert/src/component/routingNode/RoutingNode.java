@@ -90,16 +90,22 @@ public class RoutingNode extends TerminalNode
 	public synchronized void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
 		tables.putIfAbsent(neighbour, routes);
+		RouteInfo tmp = null;
 		
 		for(RouteInfo ri : routes)
 		{
 			for(RouteInfo mri : tables.get(neighbour))
 			{
-				if(ri.getDestination().equals(mri.getDestination()) && mri.getNumberOfHops()>ri.getNumberOfHops())
+				if(ri.getDestination().equals(mri.getDestination()) && mri.getNumberOfHops() > ri.getNumberOfHops())
 				{
-					tables.get(neighbour).remove(mri);
-					tables.get(neighbour).add(ri);
+					tmp = mri;
+					break;
 				}
+			}
+			if(tmp != null)
+			{
+				tables.get(neighbour).remove(tmp);
+				tables.get(neighbour).add(ri);
 			}
 		}
 	}
@@ -192,12 +198,11 @@ public class RoutingNode extends TerminalNode
 						}
 					}
 				}
-
-				if(cc != null)
-				{
-					this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
-					return true;
-				}
+			}
+			if(cc != null)
+			{
+				this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
+				return true;
 			}
 			for(NodeAddressI sri : tables.keySet())
 			{
@@ -251,17 +256,23 @@ public class RoutingNode extends TerminalNode
 	 * @param numberOfHops
 	 * @throws Exception
 	 */
-	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
+	public synchronized void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{
 		tables.putIfAbsent(this.getAddr(), new HashSet<>());
+		RouteInfo tmp = null;
+		
 		for(RouteInfo ri : tables.get(this.getAddr()))
 		{
 			if(ri.getDestination().equals(neighbour))
 			{
-				tables.get(this.getAddr()).remove(ri);
+				tmp=ri;
 				break;
 			}
 				
+		}
+		if(tmp != null)
+		{
+			tables.get(this.getAddr()).remove(tmp);
 		}
 		tables.get(this.getAddr()).add(new RouteInfo(neighbour, numberOfHops));
 	}
