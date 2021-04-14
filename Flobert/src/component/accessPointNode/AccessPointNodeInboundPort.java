@@ -48,7 +48,7 @@ public class AccessPointNodeInboundPort extends AbstractInboundPort implements R
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> route) throws Exception 
 	{
 		// TODO Auto-generated method stub
-		this.getOwner().runTask(c -> {
+		this.getOwner().runTask("routage-uri",c -> {
 			try {
 				((AccessPointNode) c).updateRouting(neighbour, route);
 			} catch (Exception e) {
@@ -62,7 +62,7 @@ public class AccessPointNodeInboundPort extends AbstractInboundPort implements R
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception 
 	{
 		// TODO Auto-generated method stub
-		this.getOwner().runTask(c -> {
+		this.getOwner().runTask("routage-uri",c -> {
 			try {
 				((AccessPointNode) c).updateAccessPoint(neighbour, numberOfHops);
 			} catch (Exception e) {

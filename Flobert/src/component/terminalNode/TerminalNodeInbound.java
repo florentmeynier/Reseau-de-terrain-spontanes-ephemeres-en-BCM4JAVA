@@ -42,7 +42,7 @@ public class TerminalNodeInbound extends AbstractInboundPort implements Communic
 	@Override
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception 
 	{
-		this.getOwner().runTask(c -> {
+		this.getOwner().runTask("connect-uri",c -> {
 			try {
 				((TerminalNode) c).connect(address, communicationInboundPortURI);
 			} catch (Exception e) {
@@ -56,7 +56,7 @@ public class TerminalNodeInbound extends AbstractInboundPort implements Communic
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI)
 			throws Exception 
 	{
-		this.getOwner().runTask(c ->{
+		this.getOwner().runTask("connect-uri",c ->{
 			try {
 				((TerminalNode) c).connectRouting(address, communicationInboundPortURI,routingInboundPortURI);
 			} catch (Exception e) {
@@ -70,7 +70,7 @@ public class TerminalNodeInbound extends AbstractInboundPort implements Communic
 	@Override
 	public void transmitMessage(MessageI m) throws Exception 
 	{
-		this.getOwner().runTask(c -> {
+		this.getOwner().runTask("mess-uri",c -> {
 			try {
 				((TerminalNode) c).transmitMessage(m);
 			} catch (Exception e) {
