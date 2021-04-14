@@ -41,8 +41,6 @@ public class NetworkNode extends AbstractComponent
 		this.outboundPort.publishPort();
 		this.toggleLogging();
 		this.toggleTracing();
-		createNewExecutorService("message-uri",1,false);
-		createNewExecutorService("addr-uri",1,false);
 		cpt++;
 		
 	}

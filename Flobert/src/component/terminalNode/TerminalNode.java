@@ -1,11 +1,11 @@
 package component.terminalNode;
 
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import component.accessPointNode.AccessPointNode;
 import component.registration.ConnectionInfo;
@@ -50,7 +50,7 @@ public class TerminalNode extends AbstractComponent
 	private double portee;
 	
 	protected Set<ConnectionInfo> neighbours = new HashSet<>();
-	protected Map<NodeAddressI,Set<RouteInfo>> tables = new HashMap<>();
+	protected ConcurrentMap<NodeAddressI,Set<RouteInfo>> tables = new ConcurrentHashMap<>();
 	
 	/**
 	 * constructeur utilisant l'addresse, la position et la portee du noeud. Il instancie et publie les ports necessaires a celui-ci.
@@ -116,8 +116,11 @@ public class TerminalNode extends AbstractComponent
 	 */
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
-		tables.putIfAbsent(getAddr(), new HashSet<>());
-		tables.get(getAddr()).add(new RouteInfo(address,1));
+		synchronized(this)
+		{
+			tables.putIfAbsent(getAddr(), new HashSet<>());
+			tables.get(getAddr()).add(new RouteInfo(address,1));
+		}
 		if(this.outboundPort.connected())
 		{
 			this.doPortDisconnection(this.outboundPort.getPortURI());
@@ -216,40 +219,67 @@ public class TerminalNode extends AbstractComponent
 	{
 		int minHops = Integer.MAX_VALUE;
 		NodeAddressI tmp = null;
-		
-		if(tables.get(this.getAddr()) != null)
+		ConnectionInfo cc = null;
+		synchronized(this)
 		{
-			for(RouteInfo ri : tables.get(this.getAddr()))
+			if(tables.get(this.getAddr()) != null)
 			{
-				for(ConnectionInfo ci : neighbours)
+				for(RouteInfo ri : tables.get(this.getAddr()))
 				{
-					if(ri.getDestination().equals(address) && ri.getDestination().equals(ci.getAddress()) && ci.isRouting())
+					if(cc != null)
 					{
-						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-						return true;
+						break;
 					}
-				}
-			}
-		}
-		for(NodeAddressI sri : tables.keySet())
-		{
-			for(RouteInfo ri : tables.get(sri))
-			{
-				for(ConnectionInfo ci : neighbours)
-				{
-					if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.getAddress().equals(ri.getDestination()))
+					for(ConnectionInfo ci : neighbours)
 					{
-						this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-						return true;
-					}else
-					{
-						if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ri.getNumberOfHops() < minHops)
+						if(ri.getDestination().equals(address) && ri.getDestination().equals(ci.getAddress()) && ci.isRouting())
 						{
-							minHops = ri.getNumberOfHops();
-							tmp = sri;
+							cc = ci;
+							break;
 						}
 					}
 				}
+				
+				if(cc != null)
+				{
+					this.connect(cc.getAddress(), cc.getCommunicationInboundPortURI());
+					return true;
+				}
+				
+			}
+			for(NodeAddressI sri : tables.keySet())
+			{
+				if(cc != null)
+				{
+					break;
+				}
+				for(RouteInfo ri : tables.get(sri))
+				{
+					if(cc != null)
+					{
+						break;
+					}
+					for(ConnectionInfo ci : neighbours)
+					{
+						if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.getAddress().equals(ri.getDestination()))
+						{
+							cc = ci;
+							break;
+						}else
+						{
+							if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ri.getNumberOfHops() < minHops)
+							{
+								minHops = ri.getNumberOfHops();
+								tmp = sri;
+							}
+						}
+					}
+				}
+			}
+			if(cc != null)
+			{
+				this.connect(cc.getAddress(), cc.getCommunicationInboundPortURI());
+				return true;
 			}
 		}
 		for(ConnectionInfo ci : neighbours)

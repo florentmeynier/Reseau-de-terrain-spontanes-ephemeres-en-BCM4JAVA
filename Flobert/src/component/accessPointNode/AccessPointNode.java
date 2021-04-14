@@ -104,7 +104,7 @@ public class AccessPointNode extends TerminalNode
 	 * @param routes
 	 * @throws Exception
 	 */
-	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
+	public synchronized void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
 		tables.putIfAbsent(neighbour, routes);
 		
@@ -127,7 +127,7 @@ public class AccessPointNode extends TerminalNode
 	 * @param numberOfHops
 	 * @throws Exception
 	 */
-	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
+	public synchronized void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{	
 		tables.putIfAbsent(this.getAddr(), new HashSet<>());
 		for(RouteInfo ri : tables.get(this.getAddr()))
@@ -147,40 +147,66 @@ public class AccessPointNode extends TerminalNode
 	{
 		int minHops = Integer.MAX_VALUE;
 		NodeAddressI tmp = null;
-		
-		if(tables.get(this.getAddr()) != null)
+		ConnectionInfo cc = null;
+		synchronized(this)
 		{
-			for(RouteInfo ri : tables.get(this.getAddr()))
+			if(tables.get(this.getAddr()) != null)
 			{
-				for(ConnectionInfo ci : neighbours)
+				for(RouteInfo ri : tables.get(this.getAddr()))
 				{
-					if(ri.getDestination().equals(address) && ri.getDestination().equals(ci.getAddress()))
+					if(cc != null)
 					{
-						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(), ci.getRoutingInboundURI());
-						return true;
+						break;
 					}
-				}
-			}
-		}
-		for(NodeAddressI sri : tables.keySet())
-		{
-			for(RouteInfo ri : tables.get(sri))
-			{
-				for(ConnectionInfo ci : neighbours)
-				{
-					if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address))
+					for(ConnectionInfo ci : neighbours)
 					{
-						this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-						return true;
-					}else
-					{
-						if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ri.getNumberOfHops() < minHops)
+						if(ri.getDestination().equals(address) && ri.getDestination().equals(ci.getAddress()))
 						{
-							minHops = ri.getNumberOfHops();
-							tmp = sri;
+							cc = ci;
+							break;
 						}
 					}
 				}
+
+				if(cc != null)
+				{
+					this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
+					return true;
+				}
+			}
+			for(NodeAddressI sri : tables.keySet())
+			{
+				if(cc != null)
+				{
+					break;
+				}
+				for(RouteInfo ri : tables.get(sri))
+				{
+					if(cc != null)
+					{
+						break;
+					}
+					for(ConnectionInfo ci : neighbours)
+					{
+						if(ci.getAddress().equals(sri) && ri.getDestination().equals(address))
+						{
+							cc = ci;
+							break;
+						}else
+						{
+							if(ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.isRouting() && minHops > ri.getNumberOfHops())
+							{
+								minHops = ri.getNumberOfHops();
+								tmp = sri;
+							}
+						}
+					}
+				}
+			}
+			if(cc != null)
+			{
+				this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
+				return true;
 			}
 		}
 		for(ConnectionInfo ci : neighbours)
