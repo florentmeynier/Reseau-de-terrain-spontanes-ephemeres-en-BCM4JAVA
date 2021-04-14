@@ -52,6 +52,8 @@ public class TerminalNode extends AbstractComponent
 	protected Set<ConnectionInfo> neighbours = new HashSet<>();
 	protected ConcurrentMap<NodeAddressI,Set<RouteInfo>> tables = new ConcurrentHashMap<>();
 	
+	private Object mutex = new Object();
+	
 	/**
 	 * constructeur utilisant l'addresse, la position et la portee du noeud. Il instancie et publie les ports necessaires a celui-ci.
 	 * @param addr
@@ -116,7 +118,7 @@ public class TerminalNode extends AbstractComponent
 	 */
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
-		synchronized(this)
+		synchronized(mutex)
 		{
 			tables.putIfAbsent(getAddr(), new HashSet<>());
 			tables.get(getAddr()).add(new RouteInfo(address,1));
