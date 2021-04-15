@@ -106,6 +106,7 @@ public class RoutingNode extends TerminalNode
 			{
 				tables.get(neighbour).remove(tmp);
 				tables.get(neighbour).add(ri);
+				tmp = null;
 			}
 		}
 	}

@@ -123,6 +123,7 @@ public class AccessPointNode extends TerminalNode
 			{
 				tables.get(neighbour).remove(tmp);
 				tables.get(neighbour).add(ri);
+				tmp = null;
 			}
 		}
 	}
