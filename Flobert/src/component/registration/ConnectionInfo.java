@@ -1,5 +1,7 @@
 package component.registration;
 
+import java.io.Serializable;
+
 import component.registration.interfaces.NodeAddressI;
 import component.registration.interfaces.PositionI;
 
@@ -7,8 +9,12 @@ import component.registration.interfaces.PositionI;
  * classe stockant les informations des noeuds connectes au reseau ephemere.
  * @author habibbouchenaki
  */
-public class ConnectionInfo 
+public class ConnectionInfo implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private NodeAddressI addr;
 	private String communicationInboundPortURI;
 	private String routingInboundURI;

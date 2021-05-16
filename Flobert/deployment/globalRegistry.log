@@ -1,0 +1,101 @@
+1621190961626|Global registry up and running!
+1621190969356|Global registry accepted the 1th connection.
+1621190969360|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-72735ad1-bf73-4420-b297-a17d09fb3f53 rmi=localhost
+1621190969386|GlobalRegistry processing put rip-uri rmi=localhost
+1621190969388|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-00792968-05d6-4bde-896d-41215528b4f8 rmi=localhost
+1621190969398|GlobalRegistry processing put registration-dcc rmi=localhost
+1621190969448|Global registry accepted the 2th connection.
+1621190969448|All (2) connected!
+1621190969448|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-1b4950e9-ac66-4987-9469-3b4b66090e74 rmi=localhost
+1621190969484|GlobalRegistry processing put tnip-uri0 rmi=localhost
+1621190969493|GlobalRegistry processing put tnop-uri0 rmi=localhost
+1621190969501|GlobalRegistry processing put 0tnop-uri0 rmi=localhost
+1621190970546|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-b2233070-562d-4020-9925-9b5db6fc61b1 rmi=localhost
+1621190970551|GlobalRegistry processing put tnip-uri1 rmi=localhost
+1621190970556|GlobalRegistry processing put tnop-uri1 rmi=localhost
+1621190970562|GlobalRegistry processing put 1tnop-uri1 rmi=localhost
+1621190970594|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-a9e7eb7b-62c0-4e91-ad83-e5087d295447 rmi=localhost
+1621190970598|GlobalRegistry processing put tnip-uri2 rmi=localhost
+1621190970601|GlobalRegistry processing put tnop-uri2 rmi=localhost
+1621190970604|GlobalRegistry processing put 2tnop-uri2 rmi=localhost
+1621190970655|GlobalRegistry processing put rip-uri2 rmi=localhost
+1621190970662|GlobalRegistry processing put rop-uri2 rmi=localhost
+1621190970666|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-a14f40f5-69d7-4037-80bf-392aa06a2b98 rmi=localhost
+1621190970672|GlobalRegistry processing put tnip-uri3 rmi=localhost
+1621190970675|GlobalRegistry processing put tnop-uri3 rmi=localhost
+1621190970678|GlobalRegistry processing put 3tnop-uri3 rmi=localhost
+1621190970704|GlobalRegistry processing put rip-uri3 rmi=localhost
+1621190970707|GlobalRegistry processing put rop-uri3 rmi=localhost
+1621190970712|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-e0addf8f-700a-422b-b29f-3cbb11ad0712 rmi=localhost
+1621190970716|GlobalRegistry processing put tnip-uri4 rmi=localhost
+1621190970719|GlobalRegistry processing put tnop-uri4 rmi=localhost
+1621190970722|GlobalRegistry processing put 4tnop-uri4 rmi=localhost
+1621190970753|GlobalRegistry processing put apip-uri4 rmi=localhost
+1621190970756|GlobalRegistry processing put rop-uri4 rmi=localhost
+1621190970763|GlobalRegistry processing put netip-uri0 rmi=localhost
+1621190970766|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-ed8103e5-9fa4-4c66-a709-21889f371d08 rmi=localhost
+1621190970771|GlobalRegistry processing put tnip-uri5 rmi=localhost
+1621190970773|GlobalRegistry processing put tnop-uri5 rmi=localhost
+1621190970776|GlobalRegistry processing put 5tnop-uri5 rmi=localhost
+1621190970807|GlobalRegistry processing put apip-uri5 rmi=localhost
+1621190970811|GlobalRegistry processing put rop-uri5 rmi=localhost
+1621190970813|GlobalRegistry processing put netip-uri1 rmi=localhost
+1621190970818|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-108df332-c25c-421b-b65a-ec248eeec580 rmi=localhost
+1621190970827|GlobalRegistry processing put nnop-uri0 rmi=localhost
+1621190970859|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-356ba4d0-d14d-448f-ae4b-7589cc0f27fb rmi=localhost
+1621190970863|GlobalRegistry processing put nnop-uri1 rmi=localhost
+1621190970907|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-38df4a26-c8b7-460e-9d4d-c10fe88c1a08 rmi=localhost
+1621190970917|GlobalRegistry processing put network-dcc rmi=localhost
+1621190970926|GlobalRegistry processing lookup rip-uri
+1621190970955|GlobalRegistry processing lookup rip-uri
+1621190970957|GlobalRegistry processing lookup rip-uri
+1621190970960|GlobalRegistry processing lookup rip-uri
+1621190970963|GlobalRegistry processing lookup rip-uri
+1621190970965|GlobalRegistry processing lookup rip-uri
+1621190980978|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-00792968-05d6-4bde-896d-41215528b4f8
+1621190980979|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-38df4a26-c8b7-460e-9d4d-c10fe88c1a08
+1621190980980|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-72735ad1-bf73-4420-b297-a17d09fb3f53
+1621190980982|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-a9e7eb7b-62c0-4e91-ad83-e5087d295447
+1621190980984|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-1b4950e9-ac66-4987-9469-3b4b66090e74
+1621190980985|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-e0addf8f-700a-422b-b29f-3cbb11ad0712
+1621190980987|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-356ba4d0-d14d-448f-ae4b-7589cc0f27fb
+1621190980989|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-a14f40f5-69d7-4037-80bf-392aa06a2b98
+1621190980990|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-ed8103e5-9fa4-4c66-a709-21889f371d08
+1621190980991|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-b2233070-562d-4020-9925-9b5db6fc61b1
+1621190980992|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-108df332-c25c-421b-b65a-ec248eeec580
+1621190980994|GlobalRegistry processing remove registration-dcc
+1621190980994|GlobalRegistry processing remove network-dcc
+1621190980995|GlobalRegistry processing remove rip-uri
+1621190980997|GlobalRegistry processing remove rip-uri2
+1621190980998|GlobalRegistry processing remove rop-uri2
+1621190981000|GlobalRegistry processing remove tnip-uri2
+1621190981002|GlobalRegistry processing remove tnop-uri2
+1621190981003|GlobalRegistry processing remove 2tnop-uri2
+1621190981004|GlobalRegistry processing remove tnip-uri0
+1621190981005|GlobalRegistry processing remove tnop-uri0
+1621190981005|GlobalRegistry processing remove 0tnop-uri0
+1621190981006|GlobalRegistry processing remove apip-uri4
+1621190981007|GlobalRegistry processing remove netip-uri0
+1621190981008|GlobalRegistry processing remove rop-uri4
+1621190981009|GlobalRegistry processing remove tnip-uri4
+1621190981010|GlobalRegistry processing remove tnop-uri4
+1621190981010|GlobalRegistry processing remove 4tnop-uri4
+1621190981012|GlobalRegistry processing remove nnop-uri1
+1621190981013|GlobalRegistry processing remove rip-uri3
+1621190981014|GlobalRegistry processing remove rop-uri3
+1621190981014|GlobalRegistry processing remove tnip-uri3
+1621190981016|GlobalRegistry processing remove tnop-uri3
+1621190981017|GlobalRegistry processing remove 3tnop-uri3
+1621190981018|GlobalRegistry processing remove apip-uri5
+1621190981019|GlobalRegistry processing remove netip-uri1
+1621190981020|GlobalRegistry processing remove rop-uri5
+1621190981021|GlobalRegistry processing remove tnip-uri5
+1621190981022|GlobalRegistry processing remove tnop-uri5
+1621190981023|GlobalRegistry processing remove 5tnop-uri5
+1621190981024|GlobalRegistry processing remove tnip-uri1
+1621190981025|GlobalRegistry processing remove tnop-uri1
+1621190981026|GlobalRegistry processing remove 1tnop-uri1
+1621190981027|GlobalRegistry processing remove nnop-uri0
+1621190981030|GlobalRegistry processing shutdown
+1621190981035|GlobalRegistry processing shutdown
+1621190981035|Global registry shuts down!

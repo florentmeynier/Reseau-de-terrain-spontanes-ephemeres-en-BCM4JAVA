@@ -1,5 +1,7 @@
 package component.registration;
 
+import java.io.Serializable;
+
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NetworkAddressI;
 
@@ -7,8 +9,12 @@ import component.registration.interfaces.NetworkAddressI;
  * classe representant l'addresse d'un noeud du reseau classique. 
  * @author habibbouchenaki
  */
-public class NetworkAddress implements NetworkAddressI 
+public class NetworkAddress implements NetworkAddressI, Serializable 
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String addr;
 	
 	/**

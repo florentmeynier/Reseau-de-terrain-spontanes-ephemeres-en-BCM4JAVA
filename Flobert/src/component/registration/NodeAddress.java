@@ -1,5 +1,7 @@
 package component.registration;
 
+import java.io.Serializable;
+
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
 
@@ -7,8 +9,12 @@ import component.registration.interfaces.NodeAddressI;
  * classe representant l'addresse d'un noeud du reseau ephemere.
  * @author habibbouchenaki
  */
-public class NodeAddress implements NodeAddressI 
+public class NodeAddress implements NodeAddressI, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String addr;
 	
 	/**

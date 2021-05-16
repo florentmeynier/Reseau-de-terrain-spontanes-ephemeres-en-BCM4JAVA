@@ -1,0 +1,16 @@
+<deployment>
+	<hosts>
+	 <host name="localhost"
+	 	   dir="/Users/habibbouchenaki/git/Flobert/Flobert/deployment/"/>
+	 </hosts>
+	 <cyclicBarrier		hostname="localhost" port="55253"/>
+	 <globalRegistry 	hostname="localhost" port="55252"/>
+	 <rmiRegistryPort no="55999"/>
+	 <jvms2hostnames>
+	 	<jvm2hostname jvmuri="registration" rmiRegistryCreator="true" hostname="localhost"
+	 				  mainclass="component.terminalNode.test.DistributedCVM"/>
+	 	<jvm2hostname jvmuri="network" rmiRegistryCreator="false" hostname="localhost"
+	 				  mainclass="component.terminalNode.test.DistributedCVM"/>
+	 				  
+	 </jvms2hostnames>
+</deployment>

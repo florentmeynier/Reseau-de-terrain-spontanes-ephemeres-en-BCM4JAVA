@@ -1,5 +1,6 @@
 package component.routingNode;
 
+import java.rmi.ConnectException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -34,6 +35,7 @@ public class RoutingNode extends TerminalNode
 	
 	public static final String SAMPLESROUTINGNODEINBOUNDPORTURI = "rip-uri";
 	public static final String SAMPLESROUTINGNODEOUTBOUNDPORTURI = "rop-uri";
+	public static final String SAMPLESROUTAGEURI = "routage-uri";
 	private final String ROUTINGINBOUNDPORTURI;
 	private final String ROUTINGOUTBOUNDPORTURI;
 	protected RoutingNodeInboundPort rinboundPort;
@@ -56,7 +58,7 @@ public class RoutingNode extends TerminalNode
 		this.rtoutboundPort = new RoutingOutboundPort(this.ROUTINGOUTBOUNDPORTURI,this);
 		this.rinboundPort.publishPort();
 		this.rtoutboundPort.publishPort();
-		createNewExecutorService("routage-uri",1,false);
+		createNewExecutorService(SAMPLESROUTAGEURI,1,false);
 	}
 	
 	@Override
@@ -180,6 +182,7 @@ public class RoutingNode extends TerminalNode
 		int minHops = Integer.MAX_VALUE;
 		NodeAddressI tmp = null;
 		ConnectionInfo cc = null;
+		NodeAddressI ccSRI = null;
 		synchronized(this)
 		{
 			if(tables.get(this.getAddr()) != null)
@@ -203,7 +206,25 @@ public class RoutingNode extends TerminalNode
 			if(cc != null)
 			{
 				this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						for(RouteInfo ri : tables.get(this.getAddr()))
+						{
+							if(ri.getDestination().equals(cc.getAddress()))
+							{
+								tables.get(this.getAddr()).remove(ri);
+							}
+						}
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 			for(NodeAddressI sri : tables.keySet())
 			{
@@ -237,7 +258,25 @@ public class RoutingNode extends TerminalNode
 			if(cc != null)
 			{
 				this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						for(RouteInfo ri : tables.get(ccSRI))
+						{
+							if(ri.getDestination().equals(cc.getAddress()))
+							{
+								tables.get(this.getAddr()).remove(ri);
+							}
+						}
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 		}
 		for(ConnectionInfo ci : neighbours)
@@ -245,7 +284,19 @@ public class RoutingNode extends TerminalNode
 			if(ci.getAddress().equals(tmp))
 			{
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						tables.remove(tmp);
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 		}
 		return false;
@@ -276,6 +327,12 @@ public class RoutingNode extends TerminalNode
 			tables.get(this.getAddr()).remove(tmp);
 		}
 		tables.get(this.getAddr()).add(new RouteInfo(neighbour, numberOfHops));
+	}
+	
+	@Override
+	public void ping() throws Exception
+	{
+		super.ping();
 	}
 	
 	@Override

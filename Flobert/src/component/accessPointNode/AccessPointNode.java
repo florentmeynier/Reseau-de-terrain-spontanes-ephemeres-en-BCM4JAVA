@@ -1,6 +1,7 @@
 package component.accessPointNode;
 
 
+import java.rmi.ConnectException;
 import java.util.HashSet;
 
 import java.util.Random;
@@ -39,6 +40,7 @@ public class AccessPointNode extends TerminalNode
 	public static final String SAMPLESACCESSPOINTNODEINBOUNDPORTURI = "apip-uri";
 	public static final String SAMPLESACCESSPOINTNETWORKINBOUNDPORTURI = "netip-uri";
 	public static final String SAMPLESROUTINGNODEOUTBOUNDPORTURI = "rop-uri";
+	public static final String SAMPLESROUTAGEURI = "routage-uri";
 	private final String ROUTINGOUTBOUNDPORTURI;
 	private final String ACCESSPOINTINBOUNDPORTURI;
 	private final String ACCESSPOINTINBOUNDNETWORKPORTURI;
@@ -67,7 +69,7 @@ public class AccessPointNode extends TerminalNode
 		this.apinboundPort.publishPort();
 		this.rtoutboundPort.publishPort();
 		this.apninboundPort.publishPort();
-		createNewExecutorService("routage-uri",1,false);
+		createNewExecutorService(SAMPLESROUTAGEURI,1,false);
 		cptnet++;
 		
 	}
@@ -161,6 +163,7 @@ public class AccessPointNode extends TerminalNode
 		int minHops = Integer.MAX_VALUE;
 		NodeAddressI tmp = null;
 		ConnectionInfo cc = null;
+		NodeAddressI ccSRI = null;
 		synchronized(this)
 		{
 			if(tables.get(this.getAddr()) != null)
@@ -180,12 +183,29 @@ public class AccessPointNode extends TerminalNode
 						}
 					}
 				}
-
 			}
 			if(cc != null)
 			{
 				this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						for(RouteInfo ri : tables.get(this.getAddr()))
+						{
+							if(ri.getDestination().equals(cc.getAddress()))
+							{
+								tables.get(this.getAddr()).remove(ri);
+							}
+						}
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 			for(NodeAddressI sri : tables.keySet())
 			{
@@ -219,7 +239,25 @@ public class AccessPointNode extends TerminalNode
 			if(cc != null)
 			{
 				this.connectRouting(cc.getAddress(), cc.getCommunicationInboundPortURI(),cc.getRoutingInboundURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						for(RouteInfo ri : tables.get(ccSRI))
+						{
+							if(ri.getDestination().equals(cc.getAddress()))
+							{
+								tables.get(this.getAddr()).remove(ri);
+							}
+						}
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 		}
 		for(ConnectionInfo ci : neighbours)
@@ -227,7 +265,19 @@ public class AccessPointNode extends TerminalNode
 			if(ci.getAddress().equals(tmp))
 			{
 				this.connectRouting(ci.getAddress(), ci.getCommunicationInboundPortURI(),ci.getRoutingInboundURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						tables.remove(tmp);
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 		}
 		return false;
@@ -330,6 +380,12 @@ public class AccessPointNode extends TerminalNode
 	{
 		tables.putIfAbsent(this.getAddr(), new HashSet<>());
 		tables.get(this.getAddr()).add(new RouteInfo(addr,1));
+	}
+	
+	@Override
+	public void ping() throws Exception
+	{
+		super.ping();
 	}
 	
 	@Override

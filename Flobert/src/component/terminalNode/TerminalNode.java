@@ -1,6 +1,7 @@
 package component.terminalNode;
 
 
+import java.rmi.ConnectException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -40,6 +41,8 @@ public class TerminalNode extends AbstractComponent
 	protected TerminalNodeRegistrationOutboundPort routboundPort;
 	public static final String SAMPLESTERMINALNODEINBOUNDPORTURI = "tnip-uri";
 	public static final String SAMPLESTERMINALNODEOUTBOUNDPORTURI = "tnop-uri";
+	public static final String SAMPLESMESSURI = "mess-uri";
+	public static final String SAMPLESCONNECTURI = "connect-uri";
 	public static int cpt = 0;
 	protected final String TERMINALNODEINBOUNDPORTURI;
 	private final String TERMINALNODEOUTBOUNDPORTURI;
@@ -52,7 +55,9 @@ public class TerminalNode extends AbstractComponent
 	protected Set<ConnectionInfo> neighbours = new HashSet<>();
 	protected ConcurrentMap<NodeAddressI,Set<RouteInfo>> tables = new ConcurrentHashMap<>();
 	
-	private Object mutex = new Object();
+	protected Object mutex = new Object();
+	
+	protected boolean isConnected = true;
 	
 	/**
 	 * constructeur utilisant l'addresse, la position et la portee du noeud. Il instancie et publie les ports necessaires a celui-ci.
@@ -78,8 +83,8 @@ public class TerminalNode extends AbstractComponent
 		this.routboundPort.publishPort();
 		this.toggleLogging();
 		this.toggleTracing();
-		createNewExecutorService("mess-uri",2,false);
-		createNewExecutorService("connect-uri",1,false);
+		createNewExecutorService(SAMPLESMESSURI,2,false);
+		createNewExecutorService(SAMPLESCONNECTURI,1,false);
 		cpt++;
 	}
 
@@ -222,6 +227,7 @@ public class TerminalNode extends AbstractComponent
 		int minHops = Integer.MAX_VALUE;
 		NodeAddressI tmp = null;
 		ConnectionInfo cc = null;
+		NodeAddressI ccSRI = null;
 		synchronized(this)
 		{
 			if(tables.get(this.getAddr()) != null)
@@ -246,7 +252,25 @@ public class TerminalNode extends AbstractComponent
 			if(cc != null)
 			{
 				this.connect(cc.getAddress(), cc.getCommunicationInboundPortURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						for(RouteInfo ri : tables.get(this.getAddr()))
+						{
+							if(ri.getDestination().equals(cc.getAddress()))
+							{
+								tables.get(this.getAddr()).remove(ri);
+							}
+						}
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 			for(NodeAddressI sri : tables.keySet())
 			{
@@ -264,6 +288,7 @@ public class TerminalNode extends AbstractComponent
 					{
 						if(ci.isRouting() && ci.getAddress().equals(sri) && ri.getDestination().equals(address) && ci.getAddress().equals(ri.getDestination()))
 						{
+							ccSRI = sri;
 							cc = ci;
 							break;
 						}else
@@ -280,7 +305,25 @@ public class TerminalNode extends AbstractComponent
 			if(cc != null)
 			{
 				this.connect(cc.getAddress(), cc.getCommunicationInboundPortURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						for(RouteInfo ri : tables.get(ccSRI))
+						{
+							if(ri.getDestination().equals(cc.getAddress()))
+							{
+								tables.get(this.getAddr()).remove(ri);
+							}
+						}
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 		}
 		for(ConnectionInfo ci : neighbours)
@@ -288,7 +331,19 @@ public class TerminalNode extends AbstractComponent
 			if(ci.getAddress().equals(tmp))
 			{
 				this.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
-				return true;
+				try 
+				{
+					this.outboundPort.ping();
+					return true;
+				}catch(ConnectException e)
+				{
+					synchronized(mutex)
+					{
+						tables.remove(tmp);
+					}
+					this.doPortDisconnection(this.outboundPort.getPortURI());
+					return hasRouteFor(address);
+				}
 			}
 		}
 		return false;
@@ -296,7 +351,11 @@ public class TerminalNode extends AbstractComponent
 	
 	public void ping() throws Exception
 	{
-		return;
+		if(isConnected)
+		{
+			return;
+		}
+		throw new ConnectException("noeud deconnecte");
 	}
 	
 	@Override

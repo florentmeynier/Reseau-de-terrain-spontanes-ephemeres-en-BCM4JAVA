@@ -1,13 +1,19 @@
 package component.registration;
 
+import java.io.Serializable;
+
 import component.registration.interfaces.PositionI;
 
 /**
  * classe representant la position d'un noeud.
  * @author habibbouchenaki
  */
-public class Position implements PositionI 
+public class Position implements PositionI, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private double x;
 	private double y;
 	
