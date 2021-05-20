@@ -2,12 +2,16 @@ package component.accessPointNode;
 
 import java.util.Set;
 
+import component.networkNode.interfaces.NetworkNodeCI;
 import component.registration.interfaces.AddressI;
+import component.registration.interfaces.NetworkAddressI;
 import component.registration.interfaces.NodeAddressI;
-import component.registration.interfaces.PositionI;
 import component.routingNode.RouteInfo;
+import component.routingNode.interfaces.RoutingCI;
+import component.terminalNode.interfaces.CommunicationCI;
 import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.AbstractPlugin;
+import fr.sorbonne_u.components.ComponentI;
 
 /**
  * classe representant un greffon pour le role AccessPoint.
@@ -21,20 +25,51 @@ public class AccessPointNodePlugin extends AbstractPlugin
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private AccessPointNode apn;
+	protected AccessPointCommInboundPortPlugin appcip;
+	protected AccessPointNodeRoutInboundPortPlugin apprip;
+	protected AccessPointNodeNetInboundPortPlug appnip;
 	
-	/**
-	 * construit l'AccessPoint necessaire au plugin.
-	 * @param addr
-	 * @param pos
-	 * @param portee
-	 * @throws Exception
-	 */
-	protected AccessPointNodePlugin(NodeAddressI addr, PositionI pos, double portee) throws Exception
+	public AccessPointNodePlugin()
 	{
-		apn = new AccessPointNode(addr, pos, portee);
-	
+		super();
 	}
+	
+	@Override
+	public void uninstall() throws Exception {
+		// TODO Auto-generated method stub
+		this.appcip.unpublishPort();
+		this.apprip.unpublishPort();
+		this.appnip.unpublishPort();
+		this.appcip.destroyPort();
+		this.apprip.destroyPort();
+		this.appnip.destroyPort();
+		this.removeOfferedInterface(CommunicationCI.class);
+		this.removeOfferedInterface(RoutingCI.class);
+		this.removeOfferedInterface(NetworkNodeCI.class);
+	}
+
+
+
+	@Override
+	public void installOn(ComponentI owner) throws Exception {
+		// TODO Auto-generated method stub
+		super.installOn(owner);
+		assert(owner instanceof AccessPointNode);
+	}
+
+
+
+	@Override
+	public void initialise() throws Exception {
+		// TODO Auto-generated method stub
+		super.initialise();
+		this.addOfferedInterface(CommunicationCI.class);
+		this.addOfferedInterface(RoutingCI.class);
+		this.appcip = new AccessPointCommInboundPortPlugin(this.getOwner(),this.getPluginURI());
+		this.apprip = new AccessPointNodeRoutInboundPortPlugin(this.getOwner(),this.getPluginURI());
+		this.appnip = new AccessPointNodeNetInboundPortPlug(this.getOwner(),this.getPluginURI());
+	}
+	
 	
 	/**
 	 * appelle connect sur l'AccessPoint.
@@ -44,7 +79,7 @@ public class AccessPointNodePlugin extends AbstractPlugin
 	 */
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
-		apn.connect(address, communicationInboundPortURI);
+		((AccessPointNode)this.getOwner()).connect(address, communicationInboundPortURI);
 	}
 	
 	/**
@@ -56,7 +91,7 @@ public class AccessPointNodePlugin extends AbstractPlugin
 	 */
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
-		apn.connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
+		((AccessPointNode)this.getOwner()).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
 	}
 	
 	/**
@@ -67,7 +102,7 @@ public class AccessPointNodePlugin extends AbstractPlugin
 	 */
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
-		apn.updateRouting(neighbour, routes);
+		((AccessPointNode)this.getOwner()).updateRouting(neighbour, routes);
 	}
 	
 	/**
@@ -78,7 +113,7 @@ public class AccessPointNodePlugin extends AbstractPlugin
 	 */
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{
-		apn.updateAccessPoint(neighbour, numberOfHops);
+		((AccessPointNode)this.getOwner()).updateAccessPoint(neighbour, numberOfHops);
 	}
 	
 	/**
@@ -89,7 +124,7 @@ public class AccessPointNodePlugin extends AbstractPlugin
 	 */
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
-		return apn.hasRouteFor(address);
+		return ((AccessPointNode)this.getOwner()).hasRouteFor(address);
 	}
 	
 	/**
@@ -99,7 +134,20 @@ public class AccessPointNodePlugin extends AbstractPlugin
 	 */
 	public void transmitMessage(MessageI m) throws Exception
 	{
-		apn.transmitMessage(m);
+		((AccessPointNode)this.getOwner()).transmitMessage(m);
+	}
+
+	public void ping() throws Exception
+	{
+		// TODO Auto-generated method stub
+		((AccessPointNode)this.getOwner()).ping();
+	}
+
+	public void transmitAddress(NetworkAddressI addr) throws Exception
+	{
+		// TODO Auto-generated method stub
+		((AccessPointNode)this.getOwner()).transmitAddress(addr);
+		
 	}
 	
 }

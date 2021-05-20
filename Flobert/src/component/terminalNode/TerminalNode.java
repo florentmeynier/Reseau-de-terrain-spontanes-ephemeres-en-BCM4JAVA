@@ -349,6 +349,9 @@ public class TerminalNode extends AbstractComponent
 		return false;
 	}
 	
+	/**
+	 * throw une ConnectException si le noeud est deconnecte.
+	 */
 	public void ping() throws Exception
 	{
 		if(isConnected)

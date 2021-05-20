@@ -10,7 +10,6 @@
 	 	<jvm2hostname jvmuri="registration" rmiRegistryCreator="true" hostname="localhost"
 	 				  mainclass="component.terminalNode.test.DistributedCVM"/>
 	 	<jvm2hostname jvmuri="network" rmiRegistryCreator="false" hostname="localhost"
-	 				  mainclass="component.terminalNode.test.DistributedCVM"/>
-	 				  
+	 				  mainclass="component.terminalNode.test.DistributedCVM"/>			  
 	 </jvms2hostnames>
 </deployment>

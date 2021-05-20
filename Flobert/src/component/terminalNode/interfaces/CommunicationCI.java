@@ -41,5 +41,8 @@ public interface CommunicationCI extends OfferedCI, RequiredCI
 	 */
 	public boolean hasRouteFor(AddressI address) throws Exception;
 	
+	/**
+	 * throw une ConnectException si le noeud est deconnecte.
+	 */
 	public void ping() throws Exception;
 }

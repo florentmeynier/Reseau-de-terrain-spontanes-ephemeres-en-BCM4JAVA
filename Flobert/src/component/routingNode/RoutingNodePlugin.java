@@ -4,9 +4,11 @@ import java.util.Set;
 
 import component.registration.interfaces.AddressI;
 import component.registration.interfaces.NodeAddressI;
-import component.registration.interfaces.PositionI;
+import component.routingNode.interfaces.RoutingCI;
+import component.terminalNode.interfaces.CommunicationCI;
 import component.terminalNode.interfaces.MessageI;
 import fr.sorbonne_u.components.AbstractPlugin;
+import fr.sorbonne_u.components.ComponentI;
 
 /**
  * classe representant un greffon pour le role RoutingNode.
@@ -17,19 +19,46 @@ public class RoutingNodePlugin extends AbstractPlugin
 {
 	private static final long serialVersionUID = 1L;
 	
+	protected RoutingNodeCommInboundPortPlugin rtpcip;
+	protected RoutingNodeRoutInboundPortPlugin rtprip;
 	
-	private RoutingNode node;
-	
-	/**
-	 * construit le RoutingNode necessaire au plugin.
-	 * @param addr
-	 * @param pos
-	 * @param portee
-	 * @throws Exception
-	 */
-	public RoutingNodePlugin(NodeAddressI addr, PositionI pos, double portee) throws Exception 
+	public RoutingNodePlugin()
 	{
-		node = new RoutingNode(addr, pos, portee);
+		super();
+	}
+	
+	
+	
+	@Override
+	public void uninstall() throws Exception {
+		// TODO Auto-generated method stub
+		this.rtpcip.unpublishPort();
+		this.rtprip.unpublishPort();
+		this.rtpcip.destroyPort();
+		this.rtprip.destroyPort();
+		this.removeOfferedInterface(CommunicationCI.class);
+		this.removeOfferedInterface(RoutingCI.class);
+	}
+
+
+
+	@Override
+	public void installOn(ComponentI owner) throws Exception {
+		// TODO Auto-generated method stub
+		super.installOn(owner);
+		assert(owner instanceof RoutingNode);
+	}
+
+
+
+	@Override
+	public void initialise() throws Exception {
+		// TODO Auto-generated method stub
+		super.initialise();
+		this.addOfferedInterface(CommunicationCI.class);
+		this.addOfferedInterface(RoutingCI.class);
+		this.rtpcip = new RoutingNodeCommInboundPortPlugin(this.getOwner(),this.getPluginURI());
+		this.rtprip = new RoutingNodeRoutInboundPortPlugin(this.getOwner(),this.getPluginURI());
 	}
 	
 	/**
@@ -40,7 +69,7 @@ public class RoutingNodePlugin extends AbstractPlugin
 	 */
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception
 	{
-		node.connect(address, communicationInboundPortURI);
+		((RoutingNode)this.getOwner()).connect(address, communicationInboundPortURI);
 	}
 		
 	/**
@@ -52,7 +81,7 @@ public class RoutingNodePlugin extends AbstractPlugin
 	 */
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception
 	{
-		node.connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
+		((RoutingNode)this.getOwner()).connectRouting(address, communicationInboundPortURI,routingInboundPortURI);
 	}
 	
 	/**
@@ -63,7 +92,7 @@ public class RoutingNodePlugin extends AbstractPlugin
 	 */
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception
 	{
-		node.updateRouting(neighbour, routes);
+		((RoutingNode)this.getOwner()).updateRouting(neighbour, routes);
 	}
 	
 	/**
@@ -73,7 +102,7 @@ public class RoutingNodePlugin extends AbstractPlugin
 	 */
 	public void transmitMessage(MessageI m) throws Exception
 	{
-		node.transmitMessage(m);
+		((RoutingNode)this.getOwner()).transmitMessage(m);
 	}
 
 	/**
@@ -84,7 +113,7 @@ public class RoutingNodePlugin extends AbstractPlugin
 	 */
 	public boolean hasRouteFor(AddressI address) throws Exception
 	{
-		return node.hasRouteFor(address);
+		return ((RoutingNode)this.getOwner()).hasRouteFor(address);
 	}
 	
 	/**
@@ -95,7 +124,13 @@ public class RoutingNodePlugin extends AbstractPlugin
 	 */
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception
 	{
-		updateAccessPoint(neighbour, numberOfHops);
+		((RoutingNode)this.getOwner()).updateAccessPoint(neighbour, numberOfHops);
+	}
+
+	public void ping() throws Exception
+	{
+		// TODO Auto-generated method stub
+		((RoutingNode)this.getOwner()).ping();
 	}
 	
 }

@@ -16,7 +16,7 @@ public class DistributedCVM extends AbstractDistributedCVM
 {
 
 	protected static final String REGISTRATION_JVM_URI = "registration";
-	protected static final String NETWORK_JVM_URI = "network";
+	protected static final String NETWORK1_JVM_URI = "network";
 	public DistributedCVM(String[] args) throws Exception 
 	{
 		super(args);
@@ -31,7 +31,7 @@ public class DistributedCVM extends AbstractDistributedCVM
 		{
 			AbstractComponent.createComponent(Registration.class.getCanonicalName(), new Object[] {});
 			
-		}else if(AbstractCVM.getThisJVMURI().equals(NETWORK_JVM_URI))
+		}else if(AbstractCVM.getThisJVMURI().equals(NETWORK1_JVM_URI))
 		{
 			AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.1"), new Position(1,1), 10.0});
 			AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.2"), new Position(1,2), 20.0});		
@@ -43,8 +43,8 @@ public class DistributedCVM extends AbstractDistributedCVM
 			AbstractComponent.createComponent(AccessPointNode.class.getCanonicalName(), new Object[] {new NodeAddress("0.0.0.6"), new Position(1,7), 9.0});		
 			
 			AbstractComponent.createComponent(NetworkNode.class.getCanonicalName(), new Object[] {new NetworkAddress("1.0.0.0")});
-			AbstractComponent.createComponent(NetworkNode.class.getCanonicalName(), new Object[] {new NetworkAddress("1.0.0.4")});
-		}else
+			AbstractComponent.createComponent(NetworkNode.class.getCanonicalName(), new Object[] {new NetworkAddress("1.0.0.4")});	
+		}else 
 		{
 			System.out.println("Unknown JVM URI: " + AbstractCVM.getThisJVMURI());
 		}

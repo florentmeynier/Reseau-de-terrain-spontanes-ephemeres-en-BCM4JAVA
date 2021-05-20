@@ -358,6 +358,13 @@ public class RoutingNode extends TerminalNode
 				
 			}
 			this.transmitMessage(m);
+			
+			this.routboundPort.unregister(getAddr());
+			if(this.outboundPort.connected())
+			{
+				this.doPortDisconnection(this.outboundPort.getPortURI());
+			}
+			this.isConnected = false;
 
 		}catch (Exception e)
 		{
